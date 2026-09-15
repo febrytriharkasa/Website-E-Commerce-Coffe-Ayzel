@@ -25,6 +25,26 @@ class Produk extends ResourceController
         foreach ($products as $produk)
         {
             $sizes = $sizeModel->where('produk_id' , $produk['id'])->findAll();
+
+            // Cek apakah produk sudah memiliki varian
+            // Ambil ID baik jika ia Array maupun Object
+            $produkId = is_array($produk) ? $produk['id'] : $produk->id;
+
+            // Cari varian berdasarkan ID produk
+            $sizes = $sizeModel->where('produk_id', $produkId)->findAll();
+
+            // Jika kosong ATAU jumlahnya 0, lewati produk ini
+            if (empty($sizes) || count($sizes) === 0) {
+                continue; 
+            }
+
+            // Looping setiap varian yang ada di dalam produk tersebut
+            foreach ($sizes as &$v) {
+                // DI SINI FUNGSI DIJALANKAN!
+                // Hasil perhitungan diskon disimpan ke dalam index baru bernama 'harga_akhir'
+                $v['harga_akhir'] = $sizeModel->getDiskon($v);
+            }
+            
             $produk['sizes'] = $sizes;
             $result[] = $produk; 
         }

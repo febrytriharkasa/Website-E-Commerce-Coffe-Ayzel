@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
+import { getProductsFromAPI } from '../api/api';
 import axios from 'axios';
 
 const WA_NUMBER = '6285829211582';
-
-const API_BASE_URL = 'http://localhost:8080';
-
 
 function formatCurrency(n) {
   return 'Rp ' + n.toLocaleString('id-ID');
@@ -29,46 +27,12 @@ export default function Products() {
   const [selectedSizes, setSelectedSizes] = useState({});
 
   useEffect(() => {
-    getProducts();
+    const fetchData = async () => {
+      const data = await getProductsFromAPI();
+      setProducts(data);
+    };
+    fetchData();
   }, []);
-
-  // Panggil API
-  const getProducts = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/api/produk`);
-      const apiData = response.data.data;
-
-      // KUNCI FUNDAMENTAL: Transformasi Data
-      // Kita harus menyesuaikan struktur database CI4 dengan kebutuhan Frontend
-      const formattedProducts = apiData.map((item) => {
-        
-        // Buat array ukuran, contoh: ['200gr', '500gr']
-        const sizesArray = item.sizes.map(s => s.ukuran);
-        
-        // Buat object harga, contoh: { '200gr': 15000, '500gr': 25000 }
-        const pricesObject = {};
-        item.sizes.forEach(s => {
-          pricesObject[s.ukuran] = parseInt(s.harga);
-        });
-
-        return {
-          id: item.id,
-          name: item.nama, // CI4 pakai field 'nama'
-          desc: item.deskripsi, // CI4 pakai field 'deskripsi'
-          // Ambil gambar langsung dari folder public/imgProducts di CI4
-          image: item.gambar ? `${API_BASE_URL}/imgProducts/${item.gambar}` : null,
-          tag: item.tag || null, // Abaikan jika belum buat kolom tag di database
-          color: 'from-amber-100 to-amber-200', // Warna background card (bisa dinamis nanti)
-          sizes: sizesArray,
-          prices: pricesObject
-        };
-      });
-
-      setProducts(formattedProducts);
-    } catch (error) {
-      console.error("Gagal mengambil data dari API:", error);
-    }
-  };
 
   const getCartKey = (id, size) => `${id}|${size}`;
 
@@ -104,7 +68,7 @@ export default function Products() {
   // Perhitungan total harga menyesuaikan p.prices[size]
   const totalPrice = Object.entries(cart).reduce((sum, [key, qty]) => {
     const [idStr, size] = key.split('|');
-    const p = products.find((pr) => pr.id === Number(idStr));
+    const p = products.find((pr) => String(pr.id) === String(idStr));
     const price = p ? (p.prices[size] || 0) : 0;
     return sum + price * qty;
   }, 0);
@@ -113,7 +77,7 @@ export default function Products() {
   const cartItems = Object.entries(cart)
     .map(([key, qty]) => {
       const [idStr, size] = key.split('|');
-      const p = products.find((pr) => pr.id === Number(idStr));
+      const p = products.find((pr) => String(pr.id) === String(idStr));
       if (!p) return null;
       const unitPrice = p.prices[size] || 0;
       return { ...p, qty, displaySize: size, price: unitPrice };
@@ -148,7 +112,10 @@ export default function Products() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mr-4 ml-4">
             {products.map((product, index) => {
               const currentSize = selectedSizes[product.id] || product.sizes[0];
-              const currentPrice = product.prices[currentSize];
+              const currentPrice = currentSize ? product.prices[currentSize] : 0;
+              // Tambahkan 2 variabel baru ini di bawahnya:
+              const originalPrice = currentSize && product.originalPrices ? product.originalPrices[currentSize] : currentPrice;
+              const hasDiscount = currentPrice < originalPrice; // Cek apakah ada diskon
               const key = getCartKey(product.id, currentSize);
               const qty = cart[key] || 0;
 
@@ -203,10 +170,20 @@ export default function Products() {
                         ))}
                       </div>
 
+                      {/* HTML Tampilan Harga Sebelumnya */}
                       <div className="flex items-center justify-between pt-1">
-                        <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-amber-700 truncate">
-                          {formatCurrency(currentPrice)}
-                        </p>
+                        <div className="flex flex-col">
+                          {/* Tampilkan Harga Coret (Jika ada diskon) */}
+                          {hasDiscount && (
+                            <span className="text-xs text-gray-400 line-through">
+                              {formatCurrency(originalPrice)}
+                            </span>
+                          )}
+                          {/* Tampilkan Harga Final / Diskon */}
+                          <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-amber-700 truncate leading-none">
+                            {formatCurrency(currentPrice)}
+                          </p>
+                        </div>
                       </div>
 
                       <div className="flex justify-end mt-4">

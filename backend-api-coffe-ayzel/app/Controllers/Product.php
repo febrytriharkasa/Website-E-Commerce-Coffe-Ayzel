@@ -48,7 +48,7 @@ class Product extends BaseController
                     'uploaded[gambar]',
                     'max_size[gambar,2048]',
                     'is_image[gambar]',
-                    'mime_in[gambar,image/jpg,image/jpeg,image/png]'
+                    'mime_in[gambar,image/jpg,image/jpeg,image/png,image/webp]'
                 ],
                 'errors' => [
                     'uploaded' => 'Pilih gambar terlebih dahulu.',

@@ -14,6 +14,27 @@ class SizeProductModel extends Model
     protected $protectFields    = true;
     protected $allowedFields    = ['produk_id', 'ukuran', 'harga', 'stok', 'diskon', 'tipe_diskon'];
 
+    // Fungsi untuk mengatur diskon
+    public function getDiskon($sizes)
+    {
+        $harga = $sizes['harga'];
+        $diskon = $sizes['diskon'];
+
+        if ($diskon > 0)
+        {
+            // Rumus diskon
+            if ($sizes['tipe_diskon'] === 'persen')
+            {
+                $hargaDiskon = $harga - ($harga * ($diskon / 100)); // Rumus diskon persen
+            }else
+            {
+                $hargaDiskon = $harga - $diskon;
+            }
+            return max(0, $hargaDiskon); // Cegah agar tidak mines
+        }
+        return $harga;
+    }
+
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 

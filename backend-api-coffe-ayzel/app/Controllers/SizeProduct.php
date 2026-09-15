@@ -35,7 +35,7 @@ class SizeProduct extends BaseController
             foreach ($sizes as &$v) {
                 // DI SINI FUNGSI DIJALANKAN!
                 // Hasil perhitungan diskon disimpan ke dalam index baru bernama 'harga_akhir'
-                $v['harga_akhir'] = $this->getDiskon($v);
+                $v['harga_akhir'] = $this->sizeModel->getDiskon($v);
             }
             
             $p['varian'] = $sizes;
@@ -193,27 +193,6 @@ class SizeProduct extends BaseController
         }
 
         return redirect()->back()->with('error', 'Data varian tidak ditemukan!');
-    }
-
-    // Fungsi untuk mengatur diskon
-    public function getDiskon($sizes)
-    {
-        $harga = $sizes['harga'];
-        $diskon = $sizes['diskon'];
-
-        if ($diskon > 0)
-        {
-            // Rumus diskon
-            if ($sizes['tipe_diskon'] === 'persen')
-            {
-                $hargaDiskon = $harga - ($harga * ($diskon / 100)); // Rumus diskon persen
-            }else
-            {
-                $hargaDiskon = $harga - $diskon;
-            }
-            return max(0, $hargaDiskon); // Cegah agar tidak mines
-        }
-        return $harga;
     }
 
     public function delete($id)
