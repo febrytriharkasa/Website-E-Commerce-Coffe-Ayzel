@@ -105,6 +105,9 @@ export default function Products() {
               Pilih Kopi <span className="text-amber-500">Favoritmu</span>
             </h1>
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              <p className="text-lg md:text-xl bg-gradient-to-r from-amber-200 via-yellow-400 to-yellow-600 bg-clip-text text-transparent font-bold max-w-3xl mx-auto mb-5 leading-relaxed">
+              All Your Zero-Stress Everyday Latte
+              </p>
               Pilih beberapa varian sekaligus, atur jumlah, lalu pesan langsung via WhatsApp!
             </p>
           </div>

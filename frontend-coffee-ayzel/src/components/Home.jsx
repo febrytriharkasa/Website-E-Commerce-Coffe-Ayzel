@@ -61,7 +61,7 @@ export default function Home() {
             </p>
              <p className="text-lg md:text-xl bg-gradient-to-r from-amber-200 via-yellow-400 to-yellow-600 bg-clip-text text-transparent font-bold max-w-3xl mx-auto mb-10 leading-relaxed">
               All Your Zero-Stress Everyday Latte
-            </p>
+              </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <a
                 href="/products"
