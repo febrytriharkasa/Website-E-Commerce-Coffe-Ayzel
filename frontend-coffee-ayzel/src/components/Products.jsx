@@ -36,9 +36,16 @@ export default function Products() {
 
   const getCartKey = (id, size) => `${id}|${size}`;
 
-  const addToCart = (id, size) => {
+  const addToCart = (id, size, maxStock) => {
     const key = getCartKey(id, size);
-    setCart((prev) => ({ ...prev, [key]: (prev[key] || 0) + 1 }));
+    setCart((prev) => {
+      const currentQty = prev[key] || 0;
+      // Hanya tambah jika qty saat ini masih di bawah stok maksimal
+      if (currentQty < maxStock) {
+        return { ...prev, [key]: currentQty + 1 };
+      }
+      return prev; // Jika sudah mentok, kembalikan state apa adanya
+    });
   };
 
   const removeFromCart = (id, size) => {
@@ -113,7 +120,9 @@ export default function Products() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mr-4 ml-4">
-            {products.map((product, index) => {
+            {products
+              .filter((product) => product.stok > 0)
+              .map((product, index) => {
               const currentSize = selectedSizes[product.id] || product.sizes[0];
               const currentPrice = currentSize ? product.prices[currentSize] : 0;
               // Tambahkan 2 variabel baru ini di bawahnya:
@@ -121,107 +130,113 @@ export default function Products() {
               const hasDiscount = currentPrice < originalPrice; // Cek apakah ada diskon
               const key = getCartKey(product.id, currentSize);
               const qty = cart[key] || 0;
+              const maxStock = product.stocks ? product.stocks[currentSize] : 0;
 
               return (
-                <div
-                  key={product.id}
-                  className="animate-fade-up group bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-visible transition delay-100 duration-500 ease-in-out hover:-translate-y-1 hover:scale-105 flex flex-col"
-                  style={{ animationDelay: `${0.2 * index}s` }}
-                >
-                  <div className={`h-36 sm:h-40 bg-gradient-to-br ${product.color} flex items-center justify-center relative rounded-t-xl shrink-0`}>
-                    {product.tag && (
-                      <span className={`absolute -top-3 -right-3 z-0 ${tagColor(product.tag)} text-white text-xs font-bold px-3 py-1 rounded-full`}>
-                        {product.tag}
-                      </span>
-                    )}
-                    {product.image ? (
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover overflow-hidden rounded-t-xl" loading="lazy"
-                      />
-                    ) : (
-                      <svg className="w-14 h-14 sm:w-16 sm:h-16 text-white/30" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M18.5 3H6c-1.1 0-2 .9-2 2v5.71c0 3.83 2.95 7.18 6.78 7.29 3.96.12 7.22-3.06 7.22-7v-1h.5c1.93 0 3.5-1.57 3.5-3.5S20.43 3 18.5 3zM16 5v3H6V5h10zm2.5 3H18V5h.5c.83 0 1.5.67 1.5 1.5S19.33 8 18.5 8zM4 19h16v2H4v-2z" />
-                      </svg>
-                    )}
-                  </div>
-                  
-                  <div className="p-4 flex flex-col flex-1">
-                    <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-900 leading-tight flex items-start mb-1.5">
-                      {product.name}
-                    </h3>
-                    <p className="text-gray-600 text-[9px] sm:text-[10px] leading-snug min-h-[2.5rem]">
-                      {product.desc}
-                    </p>
+                  <div
+                    key={product.id}
+                    className="animate-fade-up group bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-visible transition delay-100 duration-500 ease-in-out hover:-translate-y-1 hover:scale-105 flex flex-col"
+                    style={{ animationDelay: `${0.2 * index}s` }}
+                  >
+                    <div className={`h-36 sm:h-40 bg-gradient-to-br ${product.color} flex items-center justify-center relative rounded-t-xl shrink-0`}>
+                      {product.tag && (
+                        <span className={`absolute -top-3 -right-3 z-0 ${tagColor(product.tag)} text-white text-xs font-bold px-3 py-1 rounded-full`}>
+                          {product.tag}
+                        </span>
+                      )}
+                      {product.image ? (
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover overflow-hidden rounded-t-xl" loading="lazy"
+                        />
+                      ) : (
+                        <svg className="w-14 h-14 sm:w-16 sm:h-16 text-white/30" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M18.5 3H6c-1.1 0-2 .9-2 2v5.71c0 3.83 2.95 7.18 6.78 7.29 3.96.12 7.22-3.06 7.22-7v-1h.5c1.93 0 3.5-1.57 3.5-3.5S20.43 3 18.5 3zM16 5v3H6V5h10zm2.5 3H18V5h.5c.83 0 1.5.67 1.5 1.5S19.33 8 18.5 8zM4 19h16v2H4v-2z" />
+                        </svg>
+                      )}
+                    </div>
+                    
+                    <div className="p-4 flex flex-col flex-1">
+                      <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-900 leading-tight flex items-start mb-1.5">
+                        {product.name}
+                      </h3>
+                      <p className="text-gray-600 text-[9px] sm:text-[10px] leading-snug min-h-[2.5rem]">
+                        {product.desc}
+                      </p>
 
-                    <div className="mt-auto pt-3">
-                      <div className="flex flex-wrap gap-1 mb-2">
-                        {product.sizes.map((sizeOption, idx) => (
-                          <button
-                            key={idx}
-                            type="button"
-                            onClick={() => setSelectedSizes((prev) => ({ ...prev, [product.id]: sizeOption }))}
-                            className={`text-xs px-3 py-1.5 rounded-full font-semibold transition-colors ${
-                              currentSize === sizeOption
-                                ? 'bg-amber-500 text-white shadow-sm'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            }`}
-                          >
-                            {sizeOption}
-                          </button>
-                        ))}
-                      </div>
-
-                      {/* HTML Tampilan Harga Sebelumnya */}
-                      <div className="flex items-center justify-between pt-1">
-                        <div className="flex flex-col">
-                          {/* Tampilkan Harga Coret (Jika ada diskon) */}
-                          {hasDiscount && (
-                            <span className="text-xs text-gray-400 line-through">
-                              {formatCurrency(originalPrice)}
-                            </span>
-                          )}
-                          {/* Tampilkan Harga Final / Diskon */}
-                          <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-amber-700 truncate leading-none">
-                            {formatCurrency(currentPrice)}
-                          </p>
+                      <div className="mt-auto pt-3">
+                        <div className="flex flex-wrap gap-1 mb-2">
+                          {product.sizes.map((sizeOption, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => setSelectedSizes((prev) => ({ ...prev, [product.id]: sizeOption }))}
+                              className={`text-xs px-3 py-1.5 rounded-full font-semibold transition-colors ${
+                                currentSize === sizeOption
+                                  ? 'bg-amber-500 text-white shadow-sm'
+                                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                              }`}
+                            >
+                              {sizeOption} L
+                            </button>
+                          ))}
                         </div>
-                      </div>
 
-                      <div className="flex justify-end mt-4">
-                        {qty === 0 ? (
-                          <button
-                            onClick={() => addToCart(product.id, currentSize)}
-                            className="flex items-center justify-center w-26 px-3 py-2.5 bg-amber-500 text-white text-xs font-medium rounded-full hover:bg-amber-700 transition-all duration-200 active:scale-95"
-                          >
-                            <ShoppingCart className="w-4 h-4" />
-                          </button>
-                        ) : (
-                          <div className="flex items-center gap-1.5">
-                            <button
-                              onClick={() => removeFromCart(product.id, currentSize)}
-                              className="w-7 h-7 rounded-full bg-amber-100 text-amber-700 font-bold hover:bg-amber-200 transition-colors flex items-center justify-center text-xs"
-                              aria-label="Kurangi jumlah"
-                            >
-                              -
-                            </button>
-                            <span className="w-6 text-center font-bold text-gray-900 text-xs">
-                              {qty}
+                        {/* HTML Tampilan Harga Sebelumnya */}
+                        <div className="flex items-center justify-between pt-1">
+                          <div className="flex flex-col">
+                            <span className={`text-[10px] sm:text-xs font-medium mb-1 ${maxStock > 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                              {maxStock > 0 ? `Sisa Stok: ${maxStock}` : 'Stok Habis'}
                             </span>
-                            <button
-                              onClick={() => addToCart(product.id, currentSize)}
-                              className="w-7 h-7 rounded-full bg-amber-600 text-white font-bold hover:bg-amber-700 transition-colors flex items-center justify-center text-xs"
-                              aria-label="Tambah jumlah"
-                            >
-                              +
-                            </button>
+                            {/* Tampilkan Harga Coret (Jika ada diskon) */}
+                            {hasDiscount && (
+                              <span className="text-xs text-gray-400 line-through">
+                                {formatCurrency(originalPrice)}
+                              </span>
+                            )}
+                            {/* Tampilkan Harga Final / Diskon */}
+                            <p className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-amber-700 truncate leading-none">
+                              {formatCurrency(currentPrice)}
+                            </p>
                           </div>
-                        )}
+                        </div>
+
+                        <div className="flex justify-end mt-4">
+                          {qty === 0 ? (
+                            <button
+                              // Masukkan maxStock ke fungsi
+                              onClick={() => addToCart(product.id, currentSize, maxStock)} 
+                              disabled={maxStock === 0} // Disable jika stok varian ini 0
+                              className={`flex items-center justify-center w-26 px-3 py-2.5 text-white text-xs font-medium rounded-full transition-all duration-200 active:scale-95 ${maxStock === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-amber-500 hover:bg-amber-700'}`}
+                            >
+                              <ShoppingCart className="w-4 h-4" />
+                              {maxStock === 0 && <span className="ml-2">Habis</span>}
+                            </button>
+                          ) : (
+                            <div className="flex items-center gap-1.5">
+                              {/* ... tombol kurang (-) tetap sama ... */}
+                              <button
+                                onClick={() => removeFromCart(product.id, currentSize, maxStock)}
+                                disabled={qty >= maxStock} // Disable tombol + jika qty sudah sama dengan stok
+                                className={`w-7 h-7 rounded-full text-white font-bold transition-colors flex items-center justify-center text-xs ${qty >= maxStock ? 'bg-gray-400 cursor-not-allowed' : 'bg-amber-600 hover:bg-amber-700'}`}
+                              >
+                                -
+                              </button>
+                              <span className="w-6 text-center font-bold text-sm">{qty}</span>
+                              <button
+                                onClick={() => addToCart(product.id, currentSize, maxStock)}
+                                disabled={qty >= maxStock} // Disable tombol + jika qty sudah sama dengan stok
+                                className={`w-7 h-7 rounded-full text-white font-bold transition-colors flex items-center justify-center text-xs ${qty >= maxStock ? 'bg-gray-400 cursor-not-allowed' : 'bg-amber-600 hover:bg-amber-700'}`}
+                              >
+                                +
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
               );
             })}
           </div>
@@ -269,59 +284,65 @@ export default function Products() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              {cartItems.map((item) => (
-                <div
-                  key={`${item.id}-${item.displaySize}`}
-                  className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl"
-                >
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center flex-shrink-0 overflow-hidden`}>
-                    {item.image ? (
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <svg className="w-7 h-7 text-white/50" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M18.5 3H6c-1.1 0-2 .9-2 2v5.71c0 3.83 2.95 7.18 6.78 7.29 3.96.12 7.22-3.06 7.22-7v-1h.5c1.93 0 3.5-1.57 3.5-3.5S20.43 3 18.5 3z" />
-                      </svg>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 text-sm">
-                      {item.name}
-                    </h3>
-                    <p className="text-xs text-gray-500">{item.displaySize}</p>
-                    <p className="text-amber-700 font-bold text-sm">
-                      {formatCurrency(item.price * item.qty)}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => removeFromCart(item.id, item.displaySize)}
-                      className="w-7 h-7 rounded-full bg-amber-100 text-amber-700 font-bold hover:bg-amber-200 transition-colors flex items-center justify-center text-sm"
-                    >
-                      -
-                    </button>
-                    <span className="w-6 text-center font-bold text-sm">{item.qty}</span>
-                    <button
-                      onClick={() => addToCart(item.id, item.displaySize)}
-                      className="w-7 h-7 rounded-full bg-amber-600 text-white font-bold hover:bg-amber-700 transition-colors flex items-center justify-center text-sm"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => deleteFromCart(item.id, item.displaySize)}
-                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
-                    aria-label={`Hapus ${item.name}`}
+              {cartItems.map((item) => { 
+                const maxStock = item.stocks ? item.stocks[item.displaySize] : 0;
+                
+                return (
+
+                  <div
+                    key={`${item.id}-${item.displaySize}`}
+                    className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl"
                   >
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                    </svg>
-                  </button>
-                </div>
-              ))}
+                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center flex-shrink-0 overflow-hidden`}>
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <svg className="w-7 h-7 text-white/50" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M18.5 3H6c-1.1 0-2 .9-2 2v5.71c0 3.83 2.95 7.18 6.78 7.29 3.96.12 7.22-3.06 7.22-7v-1h.5c1.93 0 3.5-1.57 3.5-3.5S20.43 3 18.5 3z" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 text-sm">
+                        {item.name}
+                      </h3>
+                      <p className="text-xs text-gray-500">{item.displaySize}</p>
+                      <p className="text-amber-700 font-bold text-sm">
+                        {formatCurrency(item.price * item.qty)}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => removeFromCart(item.id, item.displaySize)}
+                        className="w-7 h-7 rounded-full bg-amber-100 text-amber-700 font-bold hover:bg-amber-200 transition-colors flex items-center justify-center text-sm"
+                      >
+                        -
+                      </button>
+                      <span className="w-6 text-center font-bold text-sm">{item.qty}</span>
+                      <button
+                        onClick={() => addToCart(item.id, item.displaySize, maxStock)}
+                        disabled={item.qty >= maxStock}
+                        className={`w-7 h-7 rounded-full text-white font-bold transition-colors flex items-center justify-center text-sm ${item.qty >= maxStock ? 'bg-gray-400 cursor-not-allowed' : 'bg-amber-600 hover:bg-amber-700'}`}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => deleteFromCart(item.id, item.displaySize)}
+                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                      aria-label={`Hapus ${item.name}`}
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                      </svg>
+                    </button>
+                  </div>
+                );
+              })}
             </div>
 
             <div className="p-6 border-t border-gray-100 bg-gray-50 rounded-b-3xl">

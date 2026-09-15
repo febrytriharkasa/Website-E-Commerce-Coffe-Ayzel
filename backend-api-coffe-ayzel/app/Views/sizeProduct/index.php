@@ -15,7 +15,7 @@
     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Daftar Produk</h5>
         <a href="/sizes-product/create" class="btn btn-primary btn-sm">
-            <i class="bi bi-plus-lg"></i> Tambah Produk
+            <i class="bi bi-plus-lg"></i> Tambah Varian Produk
         </a>
     </div>
     <div class="card-body">

@@ -25,6 +25,12 @@ export const getProductsFromAPI = async () => {
       // Inisialisasi objek kosong untuk menyimpan pasangan { ukuran: harga_asli }
       const originalPricesObject = {}; 
 
+      // buat objek kosong untuk menyimpan stok per ukuran
+      const stocksObject = {};
+
+      // Simpan total stok produk
+      let totalStokProduk = 0;
+
       // Looping setiap varian ukuran untuk mengisi objek harga
       item.sizes.forEach(s => { 
         // Mengisi harga diskon/akhir (jika ada harga_akhir gunakan itu, jika tidak gunakan harga biasa) lalu diubah ke angka (integer)
@@ -32,6 +38,10 @@ export const getProductsFromAPI = async () => {
         
         // Mengisi harga asli (sebelum diskon) lalu diubah ke angka (integer)
         originalPricesObject[s.ukuran] = parseInt(s.harga);
+        // stok berdasarkan setiap ukuran produk
+        stocksObject[s.ukuran] = parseInt(s.stok || 0);
+        // Tambahkan totalstok dari masing-masing produk
+        totalStokProduk += parseInt(s.stok || 0);
       });
 
       // Mengembalikan format objek baru yang disesuaikan dengan kebutuhan tampilan frontend
@@ -46,6 +56,8 @@ export const getProductsFromAPI = async () => {
         tag: item.tag || null, // Label/tag khusus (misal: 'Best Seller', 'New')
         color: 'from-amber-100 to-amber-200', // Default warna gradient Tailwind untuk card produk
         sizes: sizesArray, // Daftar ukuran (array string)
+        stok: totalStokProduk,
+        stocks: stocksObject,
         prices: pricesObject, // Objek harga jual/akhir per ukuran
         originalPrices: originalPricesObject // Objek harga asli per ukuran
       };
