@@ -22,7 +22,9 @@ class SizeProduct extends BaseController
     {
         helper('number');
 
-        $product = $this->productModel->select('id, nama')->findAll();
+        $limit = $this->request->getVar('limit') ?? 5;
+
+        $product = $this->productModel->paginate($limit, 'size_product');
 
         if (empty($product)) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException("Produk Tidak Ditemukan");
@@ -44,6 +46,7 @@ class SizeProduct extends BaseController
         $data = [
             'title'   => 'Kelola Varian Ukuran & Stok',
             'product' => $product,
+            'pager'   => $this->productModel->pager
         ];
 
         return view('sizeProduct/index', $data);

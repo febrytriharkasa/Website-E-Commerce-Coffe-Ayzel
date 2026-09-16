@@ -11,136 +11,185 @@
     </div>
 <?php endif; ?>
 
-<div class="card shadow-sm border-0">
-    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Daftar Produk</h5>
-        <a href="/sizes-product/create" class="btn btn-primary btn-sm">
-            <i class="bi bi-plus-lg"></i> Tambah Varian Produk
-        </a>
+<!-- START: Basic Table Card Container -->
+<div class="table-card-custom">
+  <!-- Header Controls -->
+  <div class="table-header-control">
+    <!-- Search bar -->
+    <div class="table-search-box">
+      <i class="bi bi-search table-search-icon"></i>
+      <input type="text" class="table-search-input" placeholder="Search orders or products...">
     </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle">
-                <!-- Bagian Thead: Tambahkan kolom Varian -->
-                <thead class="table-light">
-                    <tr>
-                        <th width="5%">No</th>
-                        <th width="20%">Nama Produk</th>
-                        <!-- Kolom Baru -->
-                        <th>Ukuran</th> 
-                        <th>Harga</th>
-                        <th>Stok</th>
-                        <th width="15%">Aksi</th>
-                    </tr>
-                </thead>
-
-                <!-- Bagian Tbody: Tambahkan loop untuk menampilkan varian -->
-                <tbody>
-                    <?php $no = 1; ?>
-                    <?php foreach ($product as $p) : ?>
-                        
-                        <!-- Menghitung jumlah varian pada produk saat ini -->
-                        <?php $jmlVarian = count($p['varian'] ?? []); ?>
-                        
-                        <?php if ($jmlVarian > 0) : ?>
-                            <!-- Jika produk memiliki varian, jalankan loop ke bawah -->
-                            <?php foreach ($p['varian'] as $index => $v) : ?>
-                                <tr>
-                                    <!-- Kolom No & Nama hanya dicetak di baris varian pertama, lalu di-merge (rowspan) ke bawah -->
-                                    <?php if ($index == 0) : ?>
-                                        <td rowspan="<?= $jmlVarian; ?>" class="align-middle"><?= $no++; ?></td>
-                                        <td rowspan="<?= $jmlVarian; ?>" class="align-middle fw-bold"><?= $p['nama']; ?></td>
-                                    <?php endif; ?>
-                                    
-                                    <td class="align-middle"><?= $v['ukuran']; ?></td>
-                                    <td class="align-middle">
-                                        <?php if ($v['harga_akhir'] < $v['harga']) : ?>
-                                            <!-- Jika ada diskon: Coret harga asli (text-decoration-line-through) -->
-                                            <span class="text-muted text-decoration-line-through" style="font-size: 0.85rem;">
-                                                Rp <?= number_format($v['harga'], 0, ',', '.'); ?>
-                                            </span>
-                                            <br>
-                                            <!-- Tampilkan Harga Setelah Diskon -->
-                                            <strong class="text-danger">
-                                                Rp <?= number_format($v['harga_akhir'], 0, ',', '.'); ?>
-                                            </strong>
-                                        <?php else : ?>
-                                            <!-- Jika tidak ada diskon: Tampilkan harga asli biasa -->
-                                            <strong>Rp <?= number_format($v['harga'], 0, ',', '.'); ?></strong>
-                                        <?php endif; ?>
-
-                                    </td>
-                                    <td class="align-middle"><?= $v['stok']; ?></td>
-                                    
-                                    <!-- Tombol Aksi HARUS berada di dalam loop varian agar ID Modal sesuai -->
-                                    <td class="align-middle d-flex gap-1">
-                                        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tambahStokModal<?= $v['id']; ?>" title="Tambah Stok">
-                                            <i class="bi bi-plus-circle"></i>
-                                        </button>
-                                        <a href="/sizes-product/edit/<?= $v['id']; ?>" class="btn btn-warning btn-sm" title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                         <form action="/sizes-product/delete/<?= $v['id']; ?>" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin?');">
-                                            <?= csrf_field(); ?>
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <div class="modal fade" id="tambahStokModal<?= $v['id']; ?>" tabindex="-1" aria-labelledby="tambahStokLabel<?= $v['id']; ?>" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="tambahStokLabel<?= $v['id']; ?>">
-                                                    Tambah Stok - <?= $p['nama']; ?> (<?= $v['ukuran']; ?>)
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <!-- Sesuaikan action route ini dengan controller Anda -->
-                                            <form action="/sizes-product/update-stok/<?= $v['id']; ?>" method="POST">
-                                                <?= csrf_field(); ?>
-                                                <div class="modal-body">
-                                                    <div class="alert alert-info py-2">
-                                                        Sisa stok saat ini: <strong><?= $v['stok']; ?></strong>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="tambahan_stok_<?= $v['id']; ?>" class="form-label">Jumlah Stok Baru</label>
-                                                        <input type="number" class="form-control" id="tambahan_stok_<?= $v['id']; ?>" name="tambah_stok" min="1" required placeholder="Masukkan jumlah yang ditambahkan">
-                                                        <div class="form-text">Masukkan jumlah stok yang masuk (akan diakumulasikan).</div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-primary">Simpan Stok</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else : ?>
-                            <!-- Tampilan jika produk tersebut belum punya varian sama sekali -->
-                            <tr>
-                                <td class="align-middle"><?= $no++; ?></td>
-                                <td class="align-middle fw-bold"><?= $p['nama']; ?></td>
-                                <td colspan="4" class="text-muted fst-italic text-center" style="font-size: 0.85rem;">Belum ada varian</td>
-                            </tr>
-                        <?php endif; ?>
-
-                    <?php endforeach; ?>
-                    
-                    <!-- Pengecekan data kosong diperbaiki dari $products menjadi $product -->
-                    <?php if(empty($product)): ?>
-                        <tr>
-                            <td colspan="6" class="text-center">Belum ada data produk.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+    <!-- Action buttons / Filter options -->
+    <div class="table-filter-group">
+      <div class="dropdown">
+        <button class="btn-table-action dropdown-toggle" type="button" id="dropdownFilterStatus"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-funnel"></i> Status Filter
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownFilterStatus">
+          <li><a class="dropdown-item" href="#">All Statuses</a></li>
+          <li><a class="dropdown-item" href="#">Paid / Success</a></li>
+          <li><a class="dropdown-item" href="#">Processing</a></li>
+          <li><a class="dropdown-item" href="#">Cancelled / Failed</a></li>
+        </ul>
+      </div>
+      <a href="/sizes-product/create" class="btn-table-action" type="button">
+        <i class="bi bi-plus-lg"></i> Tambah Varian
+      </a>
     </div>
+  </div>
+
+  <!-- Responsive Table Wrapper -->
+  <div class="table-responsive">
+    <table class="table-custom">
+      <thead>
+        <tr>
+            <th width="5%">No</th>
+            <th width="20%">Nama Produk</th>
+            <th>Ukuran</th> 
+            <th>Harga</th>
+            <th>Stok</th>
+            <th width="20%">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php $no = 1 + ($pager->getPerPage('size_product') * ($pager->getCurrentPage('size_product') - 1)); ?>
+        <?php foreach ($product as $p) : ?>
+
+          <!-- Menghitung jumlah varian pada produk saat ini -->
+          <?php $jmlVarian = count($p['varian'] ?? []); ?>
+          <?php if ($jmlVarian > 0) : ?>
+            <!-- Jika produk memiliki varian, jalankan loop ke bawah -->
+            <?php foreach ($p['varian'] as $index => $v) : ?>
+              <tr>
+                 <!-- Kolom No & Nama hanya dicetak di baris varian pertama, lalu di-merge (rowspan) ke bawah -->
+                <?php if ($index == 0) : ?>
+                  <td rowspan="<?= $jmlVarian; ?>"><?= $no++; ?></td>
+                  <td rowspan="<?= $jmlVarian; ?>" class="table-product-name"><?= $p['nama']; ?></td>
+                <?php endif; ?>
+    
+                <td class="align-middle"><?= $v['ukuran']; ?></td>
+                <td class="align-middle">
+                  <?php if ($v['harga_akhir'] < $v['harga']) : ?>
+                      <!-- Jika ada diskon: Coret harga asli (text-decoration-line-through) -->
+                      <span class="text-muted text-decoration-line-through" style="font-size: 0.85rem;">
+                          Rp <?= number_format($v['harga'], 0, ',', '.'); ?>
+                      </span>
+                      <br>
+                      <!-- Tampilkan Harga Setelah Diskon -->
+                      <strong class="text-danger">
+                          Rp <?= number_format($v['harga_akhir'], 0, ',', '.'); ?>
+                      </strong>
+                  <?php else : ?>
+                      <!-- Jika tidak ada diskon: Tampilkan harga asli biasa -->
+                      <strong>Rp <?= number_format($v['harga'], 0, ',', '.'); ?></strong>
+                  <?php endif; ?>
+                </td>
+                <td class="align-middle"><?= $v['stok']; ?></td>
+
+                <td>
+                  <!-- Aksi -->
+                  <div class="d-flex justify-content-center gap-1">
+                    <!-- Tambah Stok -->
+                    <button type="button" class="btn-custom btn-custom-primary btn-custom-sm" title="Tambah Stok" data-bs-toggle="modal" data-bs-target="#tambahStokModal<?= $v['id']; ?>">
+                        <i class="bi bi-plus-circle"></i>
+                    </button>
+                    <!-- Edit -->
+                    <a href="/sizes-product/edit/<?= $v['id']; ?>" class="btn-custom btn-custom-warning btn-custom-sm" title="Edit row"><i class="bi bi-pencil"></i></a>
+                    <!-- Delete -->
+                    <button type="button" class="btn-custom btn-custom-danger btn-custom-sm" title="Hapus" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $p['id']; ?>">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+
+                  <!-- Delete Confirmation Pop Up -->
+                  <div class="modal fade" id="deleteModal<?= $v['id']; ?>" tabindex="-1" aria-labelledby="deleteModalLabel<?= $p['id']; ?>" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                        <div class="modal-header border-0 pb-0">
+                          <h5 class="modal-title font-weight-bold" id="deleteModalLabel<?= $p['id']; ?>">Konfirmasi Hapus</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                          <div class="mb-3">
+                            <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                          </div>
+                          <p class="mb-1 text-muted">Apakah Anda yakin ingin menghapus produk ini?</p>
+                          <h6 class="fw-bold text-dark"><?= $p['nama']; ?></h6>
+                          <small class="text-danger">Tindakan ini tidak dapat dibatalkan.</small>
+                        </div>
+                        <div class="modal-footer border-0 pt-0 justify-content-center gap-2">
+                          <button type="button" class="btn-custom btn-custom-light px-4" data-bs-dismiss="modal">Batal</button>
+                          <form action="/sizes-product/delete/<?= $p['id']; ?>" method="POST" class="d-inline">
+                            <?= csrf_field(); ?>
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn-custom btn-custom-danger px-4">Hapus Produk</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Tambah Stok Pop Up -->
+                  <div class="modal fade" id="tambahStokModal<?= $v['id']; ?>" tabindex="-1" aria-labelledby="deleteModalLabel<?= $p['id']; ?>" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                        <div class="modal-header border-0 pb-0">
+                          <h5 class="modal-title font-weight-bold" id="deleteModalLabel<?= $p['id']; ?>">Konfirmasi Hapus</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                          <p class="mb-1 text-muted">Apakah Anda yakin ingin menambah stok <?= $p['nama']; ?>?</p>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                          <!-- Form dibuat w-100 (lebar 100%) agar membungkus seluruh area footer -->
+                          <form action="/sizes-product/update-stok/<?= $v['id']; ?>" method="POST" class="w-100">
+                            <?= csrf_field(); ?>
+                            
+                            <!-- Input Field -->
+                            <div class="mb-4">
+                              <input type="number" 
+                                    class="form-control text-center" 
+                                    id="tambahan_stok_<?= $v['id']; ?>" 
+                                    name="tambah_stok" 
+                                    min="1" 
+                                    required 
+                                    placeholder="Masukkan jumlah yang ditambahkan">
+                            </div>
+                            
+                            <!-- Area Tombol -->
+                            <div class="d-flex justify-content-center gap-2">
+                              <button type="button" class="btn-custom btn-custom-light px-4" data-bs-dismiss="modal">Batal</button>
+                              <button type="submit" class="btn-custom btn-custom-primary px-4">Tambah Stok</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php else : ?>
+            <!-- Tampilan jika produk tersebut belum punya varian sama sekali -->
+            <tr>
+                <td class="align-middle"><?= $no++; ?></td>
+                <td class="align-middle fw-bold"><?= $p['nama']; ?></td>
+                <td colspan="4" class="text-muted fst-italic text-center" style="font-size: 0.85rem;">Belum ada varian</td>
+            </tr>
+          <?php endif; ?>
+        <?php endforeach; ?>
+        <?php if(empty($product)): ?>
+          <tr>
+              <td colspan="6" class="text-center">Belum ada data produk.</td>
+          </tr>
+        <?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+  <!-- Footer Controls / Pagination -->
+  <?= $pager->links('size_product', 'bootstrap_pagination'); ?>
 </div>
-
+<!-- END: Basic Table Card Container -->
 <?= $this->endSection(); ?>

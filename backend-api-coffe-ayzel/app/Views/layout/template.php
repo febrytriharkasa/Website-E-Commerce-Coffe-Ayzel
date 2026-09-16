@@ -1,152 +1,270 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'Dashboard'; ?></title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <style>
-        body {
-            background-color: #f5f8fc;
-            overflow-x: hidden;
-        }
-        .wrapper {
-            display: flex;
-            width: 100%;
-            align-items: stretch;
-            min-height: 100vh;
-        }
-        /* Sidebar Styling */
-        #sidebar {
-            min-width: 260px;
-            max-width: 260px;
-            background-color: #1c2536; /* Warna gelap ala Dash UI */
-            color: #94a3b8;
-            transition: all 0.3s;
-        }
-        .sidebar-brand {
-            color: #ffffff;
-            font-size: 1.25rem;
-            font-weight: 700;
-            padding: 1.5rem;
-            text-decoration: none;
-            display: block;
-        }
-        .sidebar-heading {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 700;
-            color: #64748b;
-            padding: 1.5rem 1.5rem 0.5rem;
-            margin: 0;
-        }
-        .sidebar-nav {
-            padding: 0;
-            list-style: none;
-        }
-        .sidebar-link {
-            padding: 0.65rem 1.5rem;
-            color: #cbd5e1;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: 0.2s;
-            font-size: 0.9rem;
-        }
-        .sidebar-link:hover, .sidebar-link.active {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .sidebar-link i {
-            margin-right: 12px;
-            font-size: 1.1rem;
-        }
-        .sidebar-link .arrow {
-            margin-left: auto;
-            font-size: 0.8rem;
-            transition: transform 0.3s ease;
-        }
-        .sidebar-link[aria-expanded="true"] .arrow {
-            transform: rotate(180deg);
-        }
-        /* Dropdown Menu */
-        .sidebar-dropdown {
-            list-style: none;
-            padding-left: 0;
-            background-color: #151c2b;
-        }
-        .sidebar-dropdown .sidebar-link {
-            padding: 0.5rem 1.5rem 0.5rem 3.2rem;
-            font-size: 0.85rem;
-        }
-        
-        /* Content Styling */
-        #content {
-            width: 100%;
-            min-height: 100vh;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayzel Coffe Admin Dashboard</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="<?= base_url('/logo.png'); ?>">
+
+  <!-- Local Third-Party Libraries -->
+  <link rel="stylesheet" href="<?= base_url('assets/libs/bootstrap/css/bootstrap.min.css'); ?>">
+  <link rel="stylesheet" href="<?= base_url('assets/libs/bootstrap-icons/bootstrap-icons.css'); ?>">
+  <link rel="stylesheet" href="<?= base_url('assets/libs/apexcharts/apexcharts.css'); ?>">
+  <link rel="stylesheet" href="<?= base_url('assets/libs/flatpickr/flatpickr.min.css'); ?>">
+
+  <!-- Main Design System & Custom Stylesheet -->
+  <link rel="stylesheet" href="<?= base_url('assets/css/main.css'); ?>">
 </head>
+
 <body>
+      <!-- ==========================================
+         START: Sidebar Component
+         Highly polished, dark-green sticky navigation
+         ========================================== -->
+  <div class="sidebar-wrapper" id="sidebar">
+    <!-- Brand Logo / Identity -->
+    <a href="#" class="sidebar-brand">
+      <img src="<?= base_url('logo.png'); ?>" alt="Logo" class="sidebar-brand-img" style="max-height: 75px; width: auto;">
+      <span>Ayzel Coffe Admin</span>
+    </a>
 
-<div class="wrapper">
-    <!-- Sidebar -->
-    <nav id="sidebar">
-        <a href="/" class="sidebar-brand">Dash UI</a>
-
-        <ul class="sidebar-nav">
-            <!-- Main Link -->
-            <li class="sidebar-item">
-                <a href="/" class="sidebar-link <?= (url_is('/')) ? 'active' : '' ?>">
-                    <i class="bi bi-house-door"></i> Dashboard
-                </a>
-            </li>
-
-            <!-- Section 1 -->
-            <li class="sidebar-heading">Layouts & Pages</li>
-            
-             <li class="sidebar-item">
-                <a href="/product" class="sidebar-link <?= (url_is('product*')) ? 'active' : '' ?>">
-                    <i class="bi bi-layout-sidebar"></i> Data Produk
-                </a>
-            </li>
-
-            <li class="sidebar-item">
-                <a href="/sizes-product" class="sidebar-link <?= (url_is('/sizes-product*')) ? 'active' : '' ?>">
-                    <i class="bi bi-layout-sidebar"></i> Atur Varian & Stok
-                </a>
-            </li>
-
-            <li class="sidebar-item">
-                <a href="#" class="sidebar-link">
-                    <i class="bi bi-layout-sidebar"></i> Keuangan
-                </a>
-            </li>
+    <!-- Navigation Menu -->
+    <div class="flex-grow-1 overflow-y-auto">
+      <!-- Group: Menu -->
+      <div class="sidebar-menu-section">
+        <div class="sidebar-menu-title">Menu</div>
+        <ul class="sidebar-menu-list">
+          <li class="sidebar-menu-item <?= url_is('/*') ? 'active' : '' ?>">
+            <a href="<?= base_url('/') ?>" class="sidebar-menu-link" id="menu-dashboard" title="Dashboard">
+              <i class="bi bi-grid-fill"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
         </ul>
-    </nav>
+      </div>
 
-    <!-- Main Content Area -->
-    <div id="content">
-        <!-- Top Navbar (Opsional, untuk melengkapi UI Dashboard) -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-3 shadow-sm mb-4">
-            <div class="container-fluid">
-                <span class="navbar-brand mb-0 h1 d-none d-lg-block">Dashboard</span>
-            </div>
-        </nav>
+      <!-- Group: Components -->
+      <div class="sidebar-menu-section">
+        <div class="sidebar-menu-title">Components</div>
+        <ul class="sidebar-menu-list">
+            
+            <!-- Menu: Tambah Data Produk -->
+            <li class="sidebar-menu-item <?= url_is('product*') ? 'active' : '' ?>">
+            <a href="<?= base_url('product') ?>" class="sidebar-menu-link" id="menu-basictables" title="Tambah Data Produk">
+                <i class="bi bi-table"></i>
+                <span>Tambah Data Produk</span>
+            </a>
+            </li>
 
-        <!-- Area render dari views (index.php) -->
-        <div class="container-fluid px-4">
-            <?= $this->renderSection('content'); ?>
+            <!-- Menu: Manajemen Produk -->
+            <li class="sidebar-menu-item <?= (url_is('sizes-produk') || url_is('produk/kelola*')) ? 'active' : '' ?>">
+            <a href="<?= base_url('sizes-product') ?>" class="sidebar-menu-link" id="menu-uiforms" title="Manajemen Produk">
+                <i class="bi bi-input-cursor-text"></i>
+                <span>Manajemen Produk</span>
+            </a>
+            </li>
+
+            <!-- Menu: Manajemen Transaksi -->
+            <li class="sidebar-menu-item <?= url_is('transaksi*') ? 'active' : '' ?>">
+            <a href="<?= base_url('transaksi') ?>" class="sidebar-menu-link" id="menu-uibuttons" title="Manajemen Transaksi">
+                <i class="bi bi-menu-button-wide-fill"></i>
+                <span>Manajemen Transaksi</span>
+            </a>
+            </li>
+
+        </ul>
         </div>
     </div>
-</div>
 
-<!-- Bootstrap JS bundle (Termasuk Popper untuk Dropdown Collapse) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Sidebar Profile Card (Dynamic Footer) -->
+    <div class="sidebar-profile">
+      <!-- <img src="assets/images/avatar.png" alt="Administrator" class="sidebar-profile-img"
+        onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop'"> -->
+      <div class="sidebar-profile-info">
+        <div class="sidebar-profile-name">Administrator</div>
+        <div class="sidebar-profile-email">admin@email.com</div>
+      </div>
+    </div>
+  </div>
+
+    <div class="main-wrapper">
+        <!-- START: Top Navbar Component -->
+         <header class="navbar-custom">
+      <div class="navbar-left">
+        <!-- Desktop sidebar toggle (visible on large screens only) -->
+        <button class="btn-desktop-toggle d-none d-xl-flex align-items-center justify-content-center me-3"
+          id="desktop-sidebar-toggle" aria-label="Minimize Sidebar">
+          <i class="bi bi-chevron-bar-left"></i>
+        </button>
+        <!-- Mobile sidebar toggle -->
+        <button class="sidebar-toggle-btn me-2" id="sidebar-toggle" aria-label="Toggle Navigation">
+          <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Quick Actions Dropdown -->
+        <div class="dropdown ms-2">
+          <button class="btn-quick-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+            id="quick-actions-dropdown">
+            <i class="bi bi-plus-lg"></i>
+            <span>Shortcuts Create</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-quick-action" aria-labelledby="quick-actions-dropdown">
+            <li class="dropdown-header">Quick Action Shortcuts</li>
+            <li><a class="dropdown-item" href="/product/create"><i class="bi bi-plus"></i> Tambah Produk</a></li>
+            <li><a class="dropdown-item" href="/sizes-product/create"><i class="bi bi-plus"></i> Tambah Varian</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Mid navbar: search pill -->
+      <div class="navbar-search-wrapper">
+        <input type="text" class="navbar-search-input" placeholder="Search anything in Spark..." id="main-search">
+        <button class="navbar-search-btn" aria-label="Search">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+
+      <!-- Right actions -->
+      <div class="navbar-actions">
+        <!-- Fullscreen Toggle -->
+        <button class="navbar-action-btn me-1" aria-label="Toggle Fullscreen" id="btn-fullscreen">
+          <i class="bi bi-arrows-fullscreen"></i>
+        </button>
+        <div class="dropdown">
+          <button class="navbar-action-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false" id="btn-notifications" data-bs-auto-close="outside">
+            <i class="bi bi-bell"></i>
+            <span class="navbar-action-badge"></span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end dropdown-menu-notification p-0"
+            aria-labelledby="btn-notifications">
+            <div class="notification-header">
+              <h6 class="notification-title">Notifications</h6>
+              <button class="btn-clear-all" type="button">Mark all read</button>
+            </div>
+            <div class="notification-list">
+              <!-- Sale Notification -->
+              <a href="#" class="notification-item">
+                <div class="notification-icon bg-success text-white">
+                  <i class="bi bi-wallet2"></i>
+                </div>
+                <div class="notification-content">
+                  <p class="notification-text">New sale received: <strong>$150.00</strong></p>
+                  <span class="notification-time">2 mins ago</span>
+                </div>
+                <span class="notification-unread-dot"></span>
+              </a>
+              <!-- User Registration Notification -->
+              <a href="#" class="notification-item">
+                <div class="notification-icon bg-primary text-white">
+                  <i class="bi bi-person-plus-fill"></i>
+                </div>
+                <div class="notification-content">
+                  <p class="notification-text">New user registered: <strong>John Doe</strong></p>
+                  <span class="notification-time">1 hour ago</span>
+                </div>
+                <span class="notification-unread-dot"></span>
+              </a>
+              <!-- Low Stock Notification -->
+              <a href="#" class="notification-item">
+                <div class="notification-icon bg-warning text-dark">
+                  <i class="bi bi-box-seam-fill"></i>
+                </div>
+                <div class="notification-content">
+                  <p class="notification-text">Stock running low: <strong>Hoodie</strong></p>
+                  <span class="notification-time">3 hours ago</span>
+                </div>
+              </a>
+            </div>
+            <a href="#" class="notification-footer">View All Notifications</a>
+          </div>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown ms-2">
+          <button class="navbar-profile-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false" id="profile-dropdown">
+            <!-- <img src="assets/images/avatar.png" alt="Profile Image" class="navbar-profile-img"> -->
+            <span class="navbar-profile-name d-none d-md-inline">Administrator</span>
+            <i class="bi bi-chevron-down navbar-profile-caret"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-profile" aria-labelledby="profile-dropdown">
+            <li class="dropdown-header">Welcome !</li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> My Account</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-lock"></i> Lock Screen</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item text-danger" href="page-login.html"><i class="bi bi-box-arrow-right"></i>
+                Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+        <!-- END: Top Navbar Component -->
+        <!-- Main Content Area -->
+        <div id="content">
+            <!-- Area render dari views (index.php) -->
+            <div class="container-fluid px-4">
+                <?= $this->renderSection('content'); ?>
+            </div>
+            <!-- START: Footer Component -->
+            <footer class="footer-custom px-4 pb-4">
+              <div class="footer-left">
+                <div class="footer-logo">
+                  <i class="bi bi-asterisk"></i>
+                  <span>Ayzel Coffe Admin</span>
+                </div>
+              </div>
+              <div class="footer-right">
+                <div class="footer-separator"></div>
+                <div class="footer-copy">
+                <a href="#" class="footer-link">Ayzel Coffe Admin</a>
+                <span>2026</span>
+                </div>
+              </div>
+            </footer>
+            <!-- END: Footer Component -->
+        </div>
+     </div>
+    </div>
+
+  <!-- ==========================================
+         END: Main Content Area
+         ========================================== -->
+
+  <!-- Local Third-Party Libraries Script dependencies -->
+  <script src="<?= base_url('assets/libs/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
+  <script src="<?= base_url('assets/libs/apexcharts/apexcharts.min.js'); ?>"></script>
+  <script src="<?= base_url('assets/libs/flatpickr/flatpickr.min.js'); ?>"></script>
+
+  <!-- Local dashboard interactions controller -->
+  <script src="<?= base_url('assets/js/dashboard.js'); ?>"></script>
+
+  <script>
+    function previewImg() {
+        const gambar = document.querySelector('#gambar');
+        const imgPreview = document.querySelector('.img-preview');
+
+        // Membaca file gambar yang dipilih
+        const fileGambar = new FileReader();
+        fileGambar.readAsDataURL(gambar.files[0]);
+
+        fileGambar.onload = function(e) {
+            imgPreview.src = e.target.result;
+        }
+    }
+
+    document.querySelector('form').addEventListener('submit', function() {
+        const btn = document.getElementById('btnSubmit');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Menyimpan...';
+    });
+  </script>
 </body>
+
 </html>

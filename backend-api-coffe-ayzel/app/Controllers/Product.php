@@ -20,11 +20,14 @@ class Product extends BaseController
     {
         helper('number');
 
-        $product = $this->productModel->findAll();
+        $limit = $this->request->getVar('limit') ?? 5;
 
+        $product = $this->productModel->paginate($limit, 'produk');
+    
         $data = [
-            'title'    => 'Halaman Data Produk',
-            'product' => $product
+            'title'     => 'Halaman Data Produk',
+            'product'   => $product,
+            'pager'     => $this->productModel->pager
         ];
 
         return view('product/index', $data);
@@ -130,7 +133,7 @@ class Product extends BaseController
                 'rules' => [
                     'max_size[gambar,2048]',
                     'is_image[gambar]',
-                    'mime_in[gambar,image/jpg,image/jpeg,image/png]'
+                    'mime_in[gambar,image/jpg,image/jpeg,image/png,image/webp]'
                 ],
                 'errors' => [
                     'uploaded' => 'Pilih gambar terlebih dahulu.',

@@ -32,7 +32,7 @@ class DashboardController extends BaseController
             'total_transaksi' => $totalTransksi
         ];
 
-        return view('dashboard/index', $data);
+        return view('dashboard/dashboard', $data);
 
     }
 }

@@ -1,4 +1,4 @@
-<?php /** @var array $products */ ?>
+<?php /** @var array $products */ /** @var array $sizes */?>
 
 <?= $this->extend('layout/template'); ?>
 <?= $this->section('content'); ?>
@@ -41,7 +41,7 @@
                     <!-- 2. Ukuran -->
                     <div class="mb-3">
                         <label for="ukuran" class="form-label">Ukuran <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" id="ukuran" name="ukuran" value="<?= old('ukuran' ,$sizes['ukuran']); ?>" placeholder="Contoh: 200gr" required>
+                        <input type="text" class="form-control <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" id="ukuran" name="ukuran" value="<?= old('ukuran' , $sizes['ukuran']); ?>" placeholder="Contoh: 200gr" required>
                         <div class="invalid-feedback"><?= validation_show_error('ukuran'); ?></div>
                     </div>
 
@@ -80,7 +80,7 @@
 
                     <div class="d-flex justify-content-between mt-3">
                         <a href="/sizes-product" class="btn btn-secondary">Batal</a>
-                        <button type="submit" class="btn btn-primary">Simpan Varian</button>
+                        <button type="submit" id="btnSubmit" class="btn btn-primary">Simpan Varian</button>
                     </div>
                 </form>
 
