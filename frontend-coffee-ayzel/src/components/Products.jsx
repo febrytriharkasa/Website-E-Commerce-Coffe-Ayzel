@@ -1,9 +1,19 @@
 import { useEffect, useState } from 'react';
-import { ShoppingCart } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Element } from 'react-scroll';
+import { ShoppingCart, Search } from 'lucide-react';
 import { getProductsFromAPI } from '../api/api';
-import axios from 'axios';
 
 const WA_NUMBER = '6285829211582';
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (custom = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, delay: custom, ease: 'easeOut' },
+  }),
+};
 
 function formatCurrency(n) {
   return 'Rp ' + n.toLocaleString('id-ID');
@@ -22,9 +32,16 @@ function tagColor(tag) {
 
 export default function Products() {
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState({});
+  const [cart, setCart] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('cart')) || {};
+    } catch {
+      return {};
+    }
+  });
   const [showCart, setShowCart] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState({});
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,6 +50,10 @@ export default function Products() {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
 
   const getCartKey = (id, size) => `${id}|${size}`;
 
@@ -78,7 +99,15 @@ export default function Products() {
     const p = products.find((pr) => String(pr.id) === String(idStr));
     const price = p ? (p.prices[size] || 0) : 0;
     return sum + price * qty;
-  }, 0);
+   }, 0);
+
+   // Produk yang ditampilkan setelah filter stok dan pencarian nama
+   const filteredProducts = products
+     .filter((product) => product.stok > 0)
+     .filter((product) =>
+       product.name.toLowerCase().includes(search.trim().toLowerCase())
+     );
+
 
   // Menyiapkan item keranjang dengan harga sesuai varian ukuran
   const cartItems = Object.entries(cart)
@@ -104,25 +133,45 @@ export default function Products() {
   };
 
   return (
-    <main className="pt-16 lg:pt-20">
-      <section className="py-16 md:py-24 bg-gradient-to-b from-amber-50 to-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 animate-fade-up">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Pilih Kopi <span className="text-amber-500">Favoritmu</span>
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              <p className="text-lg md:text-xl bg-gradient-to-r from-amber-200 via-yellow-400 to-yellow-600 bg-clip-text text-transparent font-bold max-w-3xl mx-auto mb-5 leading-relaxed">
-              All Your Zero-Stress Everyday Latte
-              </p>
-              Pilih beberapa varian sekaligus, atur jumlah, lalu pesan langsung via WhatsApp!
-            </p>
+    <Element name="products">
+      <main className="pt-16 lg:pt-20">
+        <section className="py-16 md:py-24 bg-gradient-to-b from-amber-50 to-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              className="text-center mb-16"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={fadeUpVariant}
+            >
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                Pilih Kopi <span className="text-amber-500">Favoritmu</span>
+              </h1>
+              <div className="text-gray-600 max-w-2xl mx-auto text-lg">
+                <p className="text-lg md:text-xl bg-gradient-to-r from-amber-200 via-yellow-400 to-yellow-600 bg-clip-text text-transparent font-bold max-w-3xl mx-auto mb-5 leading-relaxed">
+                All Your Zero-Stress Everyday Latte
+                </p>
+                <p>
+                  Pilih beberapa varian sekaligus, atur jumlah, lalu pesan langsung via WhatsApp!
+                </p>
+              </div>
+            </motion.div>
+
+          <div className="relative mb-6 max-w-md mx-auto">
+            <label htmlFor="search-products" className="sr-only">Cari produk</label>
+            <input
+              id="search-products"
+              type="text"
+              placeholder="Cari nama produk..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-full border border-gray-300 bg-white py-3 pl-11 pr-10 text-sm shadow-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+            />
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mr-4 ml-4">
-            {products
-              .filter((product) => product.stok > 0)
-              .map((product, index) => {
+            {filteredProducts.map((product, idx) => {
               const currentSize = selectedSizes[product.id] || product.sizes[0];
               const currentPrice = currentSize ? product.prices[currentSize] : 0;
               // Tambahkan 2 variabel baru ini di bawahnya:
@@ -133,10 +182,14 @@ export default function Products() {
               const maxStock = product.stocks ? product.stocks[currentSize] : 0;
 
               return (
-                  <div
+                  <motion.div
                     key={product.id}
-                    className="animate-fade-up group bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-visible transition delay-100 duration-500 ease-in-out hover:-translate-y-1 hover:scale-105 flex flex-col"
-                    style={{ animationDelay: `${0.2 * index}s` }}
+                    className="group bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-visible hover:-translate-y-1 hover:scale-105 flex flex-col"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                    custom={0.1 * (idx % 4)}
+                    variants={fadeUpVariant}
                   >
                     <div className={`h-36 sm:h-40 bg-gradient-to-br ${product.color} flex items-center justify-center relative rounded-t-xl shrink-0`}>
                       {product.tag && (
@@ -178,7 +231,7 @@ export default function Products() {
                                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                               }`}
                             >
-                              {sizeOption} L
+                              {sizeOption}
                             </button>
                           ))}
                         </div>
@@ -235,10 +288,10 @@ export default function Products() {
                           )}
                         </div>
                       </div>
-                    </div>
-                  </div>
-              );
-            })}
+                      </div>
+                    </motion.div>
+                );
+              })}
           </div>
         </div>
       </section>
@@ -256,18 +309,28 @@ export default function Products() {
         </button>
       )}
 
-      {showCart && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Keranjang pesanan"
-        >
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setShowCart(false)}
-          />
-          <div className="relative bg-white w-full max-w-lg mx-4 rounded-3xl shadow-2xl max-h-[80vh] flex flex-col animate-slide-up">
+      <AnimatePresence>
+        {showCart && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Keranjang pesanan"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={() => setShowCart(false)}
+            />
+            <motion.div
+              className="relative bg-white w-full max-w-lg mx-4 rounded-3xl shadow-2xl max-h-[80vh] flex flex-col"
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.2 }}
+            >
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
               <h2 className="text-xl font-bold text-gray-900">
                 Keranjang Pesanan
@@ -362,9 +425,11 @@ export default function Products() {
                 Pesan via WhatsApp
               </button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
-    </main>
+    </AnimatePresence>
+  </main>
+</Element>
   );
 }

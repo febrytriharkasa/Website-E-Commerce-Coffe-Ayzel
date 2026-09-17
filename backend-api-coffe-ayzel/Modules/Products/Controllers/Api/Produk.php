@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Controllers\Api;
+namespace Modules\Products\Controllers\Api;
 
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
-use App\Models\ProductModel;
-use App\Models\SizeProductModel;
+use Modules\Products\Models\ProductModel;
+use Modules\Products\Models\SizeProductModel;
 
 class Produk extends ResourceController
 {

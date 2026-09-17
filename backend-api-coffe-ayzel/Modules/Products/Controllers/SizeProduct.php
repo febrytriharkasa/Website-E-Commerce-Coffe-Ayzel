@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Controllers;
+namespace Modules\Products\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\ProductModel;
-use App\Models\SizeProductModel;
-use CodeIgniter\Validation\Rules;
+use Modules\Products\Models\ProductModel;
+use Modules\Products\Models\SizeProductModel;
 
 class SizeProduct extends BaseController
 {
@@ -49,7 +48,7 @@ class SizeProduct extends BaseController
             'pager'   => $this->productModel->pager
         ];
 
-        return view('sizeProduct/index', $data);
+        return view('Modules\Products\Views\Sizes-Products\index', $data);
     }
 
     public function create()
@@ -59,7 +58,7 @@ class SizeProduct extends BaseController
             'product' => $this->productModel->select('id, nama')->findAll()
         ];
 
-        return view('sizeProduct/create', $data);
+        return view('Modules\Products\Views\Sizes-Products\create', $data);
     }
 
     // $produk_id diambil otomatis dari URL parameter
@@ -128,7 +127,7 @@ class SizeProduct extends BaseController
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Varian Kopi tidak ada.');
         }
 
-        return view('sizeProduct/edit', $data);
+        return view('Modules\Products\Views\Sizes-Products\edit', $data);
 
     }
 

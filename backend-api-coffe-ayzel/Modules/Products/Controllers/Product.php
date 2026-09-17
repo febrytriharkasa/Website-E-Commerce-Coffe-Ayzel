@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Controllers;
+namespace Modules\Products\Controllers;
 
 use App\Controllers\BaseController;
-use CodeIgniter\HTTP\ResponseInterface;
-use App\Models\ProductModel;
-use CodeIgniter\HTTP\Files\UploadedFile;
+use Modules\Products\Models\ProductModel;
 
 class Product extends BaseController
 {
@@ -30,7 +28,7 @@ class Product extends BaseController
             'pager'     => $this->productModel->pager
         ];
 
-        return view('product/index', $data);
+        return view('Modules\Products\Views\Products\index', $data);
     }
 
     public function create()
@@ -39,7 +37,7 @@ class Product extends BaseController
             'title' => 'Tambah Data Produk',
         ];
 
-        return view('product/create', $data);
+        return view('Modules\Products\Views\Products\create', $data);
     }
 
     public function store()
@@ -112,7 +110,7 @@ class Product extends BaseController
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Nama Kopi tidak ada.');
         }
 
-        return view('product/edit', $data);
+        return view('Modules\Products\Views\Products\edit', $data);
     }
 
     public function update($id)

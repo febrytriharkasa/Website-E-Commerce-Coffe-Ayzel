@@ -27,7 +27,7 @@ export default function Navbar() {
             aria-label="Coffee Ayzel Home"
           >
             <img src="/logo.png" alt="Logo Company" className="w-12 h-12" />
-            <span className="hidden sm:block text-amber-500">Coffee Ayzel</span>
+            <span className="hidden sm:block text-amber-400">Coffee Ayzel</span>
           </Link>
 
           <div className="hidden lg:flex items-center gap-8">

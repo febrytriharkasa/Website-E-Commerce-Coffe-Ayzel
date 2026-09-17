@@ -3,6 +3,20 @@
 
 <?= $this->section('content'); ?>
 
+<?php
+    // Logika PHP untuk memecah nilai old() jika form gagal validasi
+    // Contoh: "250 ml" dipecah menjadi angka "250" dan satuan "ml"
+    $oldUkuran = old('ukuran');
+    $angka     = '';
+    $satuan    = 'ml'; // Default satuan
+
+    if ($oldUkuran) {
+        $parts  = explode(' ', $oldUkuran);
+        $angka  = $parts[0] ?? '';
+        $satuan = $parts[1] ?? 'ml';
+    }
+?>
+
 <!-- ==========================================
         START: Main Content Area
         ========================================== -->
@@ -39,19 +53,41 @@
 
         <!-- Ukuran -->
         <div class="mb-3">
-          <label for="ukuran" class="form-label-custom">Ukuran Varian Kopi</label>
-          <input 
-            type="text" 
-            class="form-control-custom <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" 
-            id="ukuran" 
-            name="ukuran" 
-            value="<?= old('ukuran'); ?>" 
-            placeholder="Masukkan ukuran varian kopi" 
-            required>
-          <div class="form-feedback-custom invalid-custom">
-            </i><?= validation_show_error('ukuran'); ?>
+          <label for="ukuran_angka" class="form-label-custom">Ukuran Varian Kopi</label>
+          
+          <!-- Input Hidden: Ini yang sebenarnya dikirim ke Controller dan Database -->
+          <input type="hidden" name="ukuran" id="ukuran_final" value="<?= old('ukuran'); ?>">
+
+          <!-- Tampilan Visual (Input Group Bootstrap) -->
+          <div class="input-group">
+              <!-- Input Angka -->
+              <input 
+                  type="number" 
+                  class="form-control-custom form-control <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" 
+                  id="ukuran_angka" 
+                  value="<?= $angka; ?>" 
+                  placeholder="Contoh: 250" 
+                  oninput="gabungkanUkuran()"
+                  required>
+              
+              <!-- Dropdown Satuan -->
+              <select 
+                  class="form-select <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" 
+                  id="ukuran_satuan" 
+                  onchange="gabungkanUkuran()" 
+                  style="max-width: 100px; cursor: pointer;">
+                  <option value="ml" <?= ($satuan == 'ml') ? 'selected' : ''; ?>>ml</option>
+                  <option value="L" <?= ($satuan == 'L') ? 'selected' : ''; ?>>L</option>
+              </select>
           </div>
-        </div>
+
+          <!-- Pesan Error Validasi -->
+          <?php if(validation_show_error('ukuran')): ?>
+              <div class="form-text text-danger mt-1">
+                  <?= validation_show_error('ukuran'); ?>
+              </div>
+          <?php endif; ?>
+      </div>
 
         <!-- Harga -->
         <div class="mb-3">
@@ -128,5 +164,20 @@
 
 </div>
 <!-- END: Form Component Row Grid Layout -->
+
+<script>
+    function gabungkanUkuran() {
+        const angka = document.getElementById('ukuran_angka').value;
+        const satuan = document.getElementById('ukuran_satuan').value;
+        const finalInput = document.getElementById('ukuran_final');
+        
+        // Jika angka diisi, gabungkan dengan satuan (Contoh hasil: "250 ml")
+        if (angka !== "") {
+            finalInput.value = angka + ' ' + satuan;
+        } else {
+            finalInput.value = ''; // Kosongkan jika angka dihapus
+        }
+    }
+</script>
 
 <?= $this->endSection(); ?>

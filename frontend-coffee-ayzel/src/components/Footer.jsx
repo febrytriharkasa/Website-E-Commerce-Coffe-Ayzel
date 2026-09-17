@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Link as RouterLink } from 'react-router-dom';
 
 const WA_NUMBER = '6285829211582';
 
@@ -11,15 +12,23 @@ export default function Footer() {
       role="contentinfo"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
-          <div className="col-span-2 md:col-span-1">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12"
+        >
+          <div className="sm:col-span-2 lg:col-span-2 mr-24">
             <div className="flex items-center gap-2 text-2xl font-bold mb-4">
-              <img src="/logo.png" alt="Logo Company" className="w-12 h-12" />
-              <span className="text-amber-500">Coffee Ayzel</span>
+              <img src="/logo.png" alt="Logo Ayzel Coffee" className="w-12 h-12 object-contain" />
+              <span className="text-amber-400">Ayzel Coffee</span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed mb-4">
-              Kopi Susu Literan premium siap saji, langsung dari perkebunan
-              terbaik Indonesia ke meja Anda.
+              Ayzel Coffee memadukan kekayaan varian rasa kopi Ready-to-Drink berkualitas 
+              tinggi yang bersumber langsung dari perkebunan terbaik di Indonesia. 
+              Melalui dedikasi dan proses higienis modern, kami memastikan kemurnian 
+              rasa dan kualitas terbaiknya tersaji sempurna di setiap momen Anda.
             </p>
             <div className="flex gap-3">
               <a
@@ -34,7 +43,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-               href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Halo Coffee Ayzel! Saya tertarik untuk bertanya mengenai produk yang tersedia?')}`}
+                href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Halo Ayzel Coffee! Saya tertarik untuk bertanya mengenai produk yang tersedia.')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-gray-800 hover:bg-green-500 flex items-center justify-center transition-all duration-200 hover:scale-110"
@@ -58,7 +67,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div>
+          <div className="mt-10 lg:mt-0">
             <h4 className="text-sm sm:text-lg font-semibold mb-2 sm:mb-4 text-amber-400">Navigasi</h4>
             <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
               {[
@@ -69,39 +78,39 @@ export default function Footer() {
                 ['/contact', 'Kontak'],
               ].map(([path, label]) => (
                 <li key={path}>
-                  <Link
+                  <RouterLink
                     to={path}
                     className="text-gray-400 hover:text-amber-400 transition-colors duration-200"
                   >
                     {label}
-                  </Link>
+                  </RouterLink>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="col-span-2 md:col-span-1">
+          <div className="mt-10 lg:mt-0">
             <h4 className="text-sm sm:text-lg font-semibold mb-2 sm:mb-4 text-amber-400">Kontak</h4>
             <address className="not-italic space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-400">
               <p className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg className="w-5 h-5 text-amber-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                 </svg>
-                <span>Balongbendo , RT 07 / RW 01, Sidoarjo, Jawa Timur</span>
+                <span>Sidoarjo, Jawa Timur</span>
               </p>
               <p className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg className="w-5 h-5 text-amber-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
                 </svg>
                 <span>+62 858-2921-1582</span>
               </p>
             </address>
           </div>
-        </div>
+        </motion.div>
 
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-sm">
-            © {currentYear} Coffee Ayzel. All rights reserved.
+            © {currentYear} Ayzel Coffee. All rights reserved.
           </p>
           <p className="text-gray-500 text-sm">
             Made with ☕ for coffee lovers

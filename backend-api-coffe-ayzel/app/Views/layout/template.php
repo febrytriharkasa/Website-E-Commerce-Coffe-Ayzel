@@ -37,8 +37,8 @@
       <div class="sidebar-menu-section">
         <div class="sidebar-menu-title">Menu</div>
         <ul class="sidebar-menu-list">
-          <li class="sidebar-menu-item <?= url_is('/*') ? 'active' : '' ?>">
-            <a href="<?= base_url('/') ?>" class="sidebar-menu-link" id="menu-dashboard" title="Dashboard">
+          <li class="sidebar-menu-item <?= url_is('/dashboard*') ? 'active' : '' ?>">
+            <a href="<?= base_url('/dashboard') ?>" class="sidebar-menu-link" id="menu-dashboard" title="Dashboard">
               <i class="bi bi-grid-fill"></i>
               <span>Dashboard</span>
             </a>

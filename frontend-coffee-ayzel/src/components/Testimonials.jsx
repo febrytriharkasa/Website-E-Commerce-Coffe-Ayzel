@@ -1,8 +1,11 @@
+import { motion } from 'framer-motion';
+import { Link } from 'react-scroll';
+
 const testimonials = [
   {
     name: 'S*** D***',
     role: null,
-    text: 'Kopi Susu Gula Aren-nya beneran nagih! Udah langganan 3 bulan dan nggak pernah kecewa. Rasanya konsisten enak setiap botol.',
+    text: 'Kopi Susu Gula Aren-nya beneran nagih. Udah sering repeat order dan rasanya selalu konsisten, nggak pernah berubah dari awal beli.',
     rating: 5,
     avatar: 'SD',
     color: 'bg-pink-500',
@@ -10,15 +13,15 @@ const testimonials = [
   {
     name: 'B*** S******',
     role: null,
-    text: 'Sebagai programmer, kopi tuh wajib. Coffee Ayzel bikin saya nggak perlu keluar kantor buat dapetin kopi berkualitas. 1 liter cukup buat seharian!',
+    text: 'Ngebantu banget buat nemenin kerja seharian. Praktis nggak perlu bolak-balik beli kopi keluar, ukuran 1 liternya pas banget buat stok di kulkas.',
     rating: 5,
     avatar: 'BS',
     color: 'bg-blue-500',
   },
   {
     name: 'R*** H******',
-     role: null,
-    text: 'Praktis banget! Tinggal tuang ke gelas, nggak perlu bikin sendiri. Suami dan anak-anak juga suka. Harganya worth it buat kualitas segini.',
+    role: null,
+    text: 'Praktis banget tinggal tuang, nggak ribet seduh-seduh lagi. Orang rumah juga pada doyan. Harganya masuk akal banget buat kualitas seenak ini.',
     rating: 5,
     avatar: 'RH',
     color: 'bg-emerald-500',
@@ -26,7 +29,7 @@ const testimonials = [
   {
     name: 'A**** P********',
     role: null,
-    text: 'Harga ramah kantong mahasiswa tapi rasanya premium banget. Varian Hazelnut favorit saya! Pengiriman juga cepet.',
+    text: 'Harganya terjangkau tapi rasanya nggak kalah sama kopi di cafe mahal. Varian Hazelnut selalu jadi andalan. Pengirimannya juga rapi dan aman.',
     rating: 4,
     avatar: 'AP',
     color: 'bg-amber-500',
@@ -34,7 +37,7 @@ const testimonials = [
   {
     name: 'M**** C***',
     role: null,
-    text: 'Sebagai barista profesional, saya akui kualitas kopi ini luar biasa. Arabikanya terasa, body-nya pas, dan after taste-nya clean.',
+    text: 'Rasa kopinya beneran kerasa premium, bukan yang asal manis aja. After taste-nya enak dan racikannya pas banget di lidah.',
     rating: 5,
     avatar: 'MC',
     color: 'bg-violet-500',
@@ -42,7 +45,7 @@ const testimonials = [
   {
     name: 'H***** W*****',
     role: null,
-    text: 'Sering pesen buat meeting di kantor. Tampilannya elegan dan rasanya bikin client impressed. Recommended!',
+    text: 'Sering pesen botolan gede gini buat stok kalau lagi ada acara atau ngumpul bareng. Kemasannya rapi dan beneran awet disimpen. Recommended pokoknya!',
     rating: 5,
     avatar: 'HW',
     color: 'bg-rose-500',
@@ -71,22 +74,31 @@ export default function Testimonials() {
     <main className="pt-16 lg:pt-20">
       <section className="py-16 md:py-24 bg-gradient-to-b from-amber-50 to-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16 animate-fade-up">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Apa Kata <span className="text-amber-500">Mereka</span>?
+              Apa Kata <span className="text-amber-400">Mereka ?</span>
             </h1>
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              Ratusan pelanggan sudah merasakan kelezatan Coffee Ayzel. Ini cerita
+              Ratusan pelanggan sudah merasakan kelezatan Ayzel Coffee. Ini cerita
               mereka.
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {testimonials.map((t, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-fade-up"
-                style={{ animationDelay: `${0.1 * (index + 1)}s` }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 * (index + 1) }}
+                className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div
@@ -103,27 +115,38 @@ export default function Testimonials() {
                 <p className="text-gray-700 mt-4 leading-relaxed text-sm">
                   &ldquo;{t.text}&rdquo;
                 </p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       <section className="py-16 md:py-24 bg-amber-600">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fade-up">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Bergabung dengan 50,000+ Pecinta Kopi
-          </h2>
-          <p className="text-amber-100 text-lg max-w-2xl mx-auto mb-8">
-            Pesan sekarang dan rasakan sendiri kenapa Coffee Ayzel jadi pilihan
-            utama kopi susu literan di Jakarta!
-          </p>
-          <a
-            href="/products"
-            className="inline-block px-8 py-4 bg-white text-amber-700 font-bold rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
           >
-            Pesan Sekarang
-          </a>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Bergabung dengan 1,000+ Pecinta Kopi
+            </h2>
+            <p className="text-amber-100 text-lg max-w-2xl mx-auto mb-8">
+              Pesan sekarang dan rasakan sendiri kenapa Ayzel Coffee jadi pilihan
+              utama kopi kekinian di Indonesia!
+            </p>
+            <Link
+              to="products"
+              spy={true}
+              smooth={true}
+              offset={-80}
+              duration={500}
+              className="inline-block px-8 py-4 bg-white text-amber-700 font-bold rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer"
+            >
+              Pesan Sekarang
+            </Link>
+          </motion.div>
         </div>
       </section>
     </main>

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Controllers;
+namespace Modules\Dashboard\Controllers;
 
-use App\Models\ProductModel;
+use App\Controllers\BaseController;
+use Modules\Products\Models\ProductModel;
 use App\Models\TransaksiModel;
 
 class DashboardController extends BaseController
@@ -32,7 +33,7 @@ class DashboardController extends BaseController
             'total_transaksi' => $totalTransksi
         ];
 
-        return view('dashboard/dashboard', $data);
+        return view('Modules\Dashboard\Views\dashboard', $data);
 
     }
 }

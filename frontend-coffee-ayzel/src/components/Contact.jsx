@@ -11,7 +11,7 @@ export default function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const text = `Halo Coffee Ayzel!\n\nNama: ${form.name}\nNo. HP: ${form.phone}\nPesan: ${form.message}`;
+    const text = `Halo Ayzel Coffee!\n\nNama: ${form.name}\nNo. HP: ${form.phone}\nPesan: ${form.message}`;
     window.open(
       `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`,
       '_blank',
@@ -24,7 +24,7 @@ export default function Contact() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 animate-fade-up">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Hubungi <span className="text-amber-500">Kami</span>
+              Hubungi <span className="text-amber-400">Kami</span>
             </h1>
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">
               Punya pertanyaan, saran, atau mau pesan dalam jumlah besar?
@@ -116,7 +116,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">Alamat</p>
-                      <p className="text-sm text-gray-600">Balongbendo , RT 07 / RW 01, Sidoarjo, Jawa Timur</p>
+                      <p className="text-sm text-gray-600">Sidoarjo, Jawa Timur</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -128,7 +128,7 @@ export default function Contact() {
                     <div>
                       <p className="font-medium text-gray-900">WhatsApp</p>
                       <p className="text-sm text-gray-600">+62 858-2921-1582</p>
-                      <p className="text-sm text-gray-600">Dengan Revi</p>
+                      <p className="text-sm text-gray-600">Dengan Mama Ayzel</p>
                     </div>
                   </div>
                 </div>
@@ -159,7 +159,7 @@ export default function Contact() {
                   acara, atau reseller.
                 </p>
                 <a
-                  href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Halo Coffee Ayzel! Saya tertarik pesan dalam jumlah besar. Bisa info harga spesialnya?')}`}
+                  href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Halo Ayzel Coffee! Saya tertarik pesan dalam jumlah besar. Bisa info harga spesialnya?')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-block px-5 py-2.5 bg-white text-amber-700 font-semibold rounded-full hover:bg-amber-50 transition-all duration-200"

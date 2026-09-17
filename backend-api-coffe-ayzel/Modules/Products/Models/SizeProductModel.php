@@ -1,18 +1,39 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Products\Models;
 
 use CodeIgniter\Model;
 
-class ProductModel extends Model
+class SizeProductModel extends Model
 {
-    protected $table            = 'tb_product';
+    protected $table            = 'tb_size_product';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['gambar', 'nama', 'deskripsi'];
+    protected $allowedFields    = ['produk_id', 'ukuran', 'harga', 'stok', 'diskon', 'tipe_diskon'];
+
+    // Fungsi untuk mengatur diskon
+    public function getDiskon($sizes)
+    {
+        $harga = $sizes['harga'];
+        $diskon = $sizes['diskon'];
+
+        if ($diskon > 0)
+        {
+            // Rumus diskon
+            if ($sizes['tipe_diskon'] === 'persen')
+            {
+                $hargaDiskon = $harga - ($harga * ($diskon / 100)); // Rumus diskon persen
+            }else
+            {
+                $hargaDiskon = $harga - $diskon;
+            }
+            return max(0, $hargaDiskon); // Cegah agar tidak mines
+        }
+        return $harga;
+    }
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -42,12 +63,4 @@ class ProductModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    // Tambahkan fungsi ini di dalam class ProductModel
-    public function getProductsWithSizes()
-    {
-        return $this->select('tb_product.id, tb_product.nama, tb_product.gambar, tb_size_product.ukuran, tb_size_product.harga, tb_size_product.stok')
-                    ->join('tb_size_product', 'tb_size_product.produk_id = tb_product.id', 'left')
-                    ->findAll();
-    }
 }
