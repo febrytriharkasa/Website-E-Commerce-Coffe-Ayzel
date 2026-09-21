@@ -89,22 +89,41 @@
           <?php endif; ?>
       </div>
 
-        <!-- Harga -->
+        <!-- Harga modal -->
         <div class="mb-3">
-          <label for="Harga" class="form-label-custom">Harga Varian Kopi</label>
+          <label for="harga_modal" class="form-label-custom">Harga Modal Varian Kopi</label>
           <div class="input-group-custom">
             <span class="input-group-text-custom">Rp.</span>
             <input 
               type="number" 
-              class="form-control-custom <?= (validation_show_error('harga')) ? 'is-invalid' : ''; ?>" 
-              id="harga"
-              name="harga"
-              value="<?= old('harga'); ?>"
-              placeholder="Masukkan harga varian kopi" 
+              class="form-control-custom <?= (validation_show_error('harga_modal')) ? 'is-invalid' : ''; ?>" 
+              id="harga_modal"
+              name="harga_modal"
+              value="<?= old('harga_modal'); ?>"
+              placeholder="Masukkan harga modal varian kopi" 
               required>
           </div>
           <div class="form-feedback-custom invalid-custom">
-            </i><?= validation_show_error('harga'); ?>
+            </i><?= validation_show_error('harga_modal'); ?>
+          </div>
+        </div>
+
+        <!-- Harga Jual -->
+        <div class="mb-3">
+          <label for="harga_jual" class="form-label-custom">Harga Jual Varian Kopi</label>
+          <div class="input-group-custom">
+            <span class="input-group-text-custom">Rp.</span>
+            <input 
+              type="number" 
+              class="form-control-custom <?= (validation_show_error('harga_jual')) ? 'is-invalid' : ''; ?>" 
+              id="harga_jual"
+              name="harga_jual"
+              value="<?= old('harga_jual'); ?>"
+              placeholder="Masukkan harga jual varian kopi" 
+              required>
+          </div>
+          <div class="form-feedback-custom invalid-custom">
+            </i><?= validation_show_error('harga_jual'); ?>
           </div>
         </div>
 

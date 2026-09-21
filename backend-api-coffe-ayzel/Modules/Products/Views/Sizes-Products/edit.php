@@ -41,15 +41,47 @@
                     <!-- 2. Ukuran -->
                     <div class="mb-3">
                         <label for="ukuran" class="form-label">Ukuran <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" id="ukuran" name="ukuran" value="<?= old('ukuran' , $sizes['ukuran']); ?>" placeholder="Contoh: 200gr" required>
+                        <input 
+                            type="text" 
+                            class="form-control <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" 
+                            id="ukuran" 
+                            name="ukuran" 
+                            value="<?= old('ukuran' , $sizes['ukuran']); ?>" 
+                            placeholder="Contoh: 200gr" 
+                            required>
                         <div class="invalid-feedback"><?= validation_show_error('ukuran'); ?></div>
                     </div>
 
-                    <!-- 3. Harga -->
+                    <!-- 3. Harga Modal -->
                     <div class="mb-3">
-                        <label for="harga" class="form-label">Harga Satuan (Rp) <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control <?= (validation_show_error('harga')) ? 'is-invalid' : ''; ?>" id="harga" name="harga" value="<?= old('harga', $sizes['harga']); ?>" required>
-                        <div class="invalid-feedback"><?= validation_show_error('harga'); ?></div>
+                        <label for="harga_modal" class="form-label">Harga Modal Satuan (Rp) <span class="text-danger">*</span></label>
+                        <div class="input-group-custom">
+                            <span class="input-group-text-custom">Rp.</span>
+                            <input 
+                                type="number" 
+                                class="form-control-custom <?= (validation_show_error('harga_modal')) ? 'is-invalid' : ''; ?>" 
+                                id="harga_modal" 
+                                name="harga_modal" 
+                                value="<?= old('harga_modal', $sizes['harga_modal']); ?>" 
+                                required>
+                        </div>
+                        <div class="invalid-feedback"><?= validation_show_error('harga_modal'); ?></div>
+                    </div>
+
+                    <!-- 3. Harga Jual -->
+                    <div class="mb-3">
+                        <label for="harga_jual" class="form-label">Harga Modal Satuan (Rp) <span class="text-danger">*</span></label>
+                        <div class="input-group-custom">
+                            <span class="input-group-text-custom">Rp.</span>
+                            <input 
+                            type="number" 
+                            class="form-control-custom <?= (validation_show_error('harga_jual')) ? 'is-invalid' : ''; ?>" 
+                            id="harga_jual" 
+                            name="harga_jual" 
+                            value="<?= old('harga_jual', $sizes['harga_jual']); ?>" 
+                            required>
+                        </div>
+                        <div class="invalid-feedback"><?= validation_show_error('harga_jual'); ?></div>
                     </div>
 
                     <!-- 4. Stok -->
@@ -73,7 +105,12 @@
                         <!-- 6. Jumlah Diskon -->
                         <div class="col-md-6 mb-3">
                             <label for="diskon" class="form-label">Jumlah Diskon</label>
-                            <input type="number" class="form-control <?= (validation_show_error('diskon')) ? 'is-invalid' : ''; ?>" id="diskon" name="diskon" value="<?= old('diskon', $sizes['diskon']); ?>">
+                            <input 
+                                type="number" 
+                                class="form-control <?= (validation_show_error('diskon')) ? 'is-invalid' : ''; ?>" 
+                                id="diskon" 
+                                name="diskon" 
+                                value="<?= old('diskon', $sizes['diskon']); ?>">
                             <div class="invalid-feedback"><?= validation_show_error('diskon'); ?></div>
                         </div>
                     </div>

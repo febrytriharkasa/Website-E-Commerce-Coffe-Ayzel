@@ -44,6 +44,7 @@ class Autoload extends AutoloadConfig
         // TAMBAHKAN BARIS INI JIKA BELUM ADA
         'Modules\Products' => ROOTPATH . 'Modules/Products',
         'Modules\Dashboard' => ROOTPATH . 'Modules/Dashboard',
+        'Modules\Transactions' => ROOTPATH . 'Modules/Transactions',
     ];
 
     /**

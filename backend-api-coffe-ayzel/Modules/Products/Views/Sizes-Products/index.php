@@ -48,7 +48,8 @@
             <th width="5%">No</th>
             <th width="20%">Nama Produk</th>
             <th>Ukuran</th> 
-            <th>Harga</th>
+            <th>Harga Modal</th>
+            <th>Harga Jual</th>
             <th>Stok</th>
             <th width="20%">Aksi</th>
         </tr>
@@ -70,11 +71,12 @@
                 <?php endif; ?>
     
                 <td class="align-middle"><?= $v['ukuran']; ?></td>
+                <td class="align-middle">Rp <?= number_format($v['harga_modal'], 0, ',', '.'); ?></td>
                 <td class="align-middle">
-                  <?php if ($v['harga_akhir'] < $v['harga']) : ?>
+                  <?php if ($v['harga_akhir'] < $v['harga_jual']) : ?>
                       <!-- Jika ada diskon: Coret harga asli (text-decoration-line-through) -->
                       <span class="text-muted text-decoration-line-through" style="font-size: 0.85rem;">
-                          Rp <?= number_format($v['harga'], 0, ',', '.'); ?>
+                          Rp <?= number_format($v['harga_jual'], 0, ',', '.'); ?>
                       </span>
                       <br>
                       <!-- Tampilkan Harga Setelah Diskon -->
@@ -83,7 +85,7 @@
                       </strong>
                   <?php else : ?>
                       <!-- Jika tidak ada diskon: Tampilkan harga asli biasa -->
-                      <strong>Rp <?= number_format($v['harga'], 0, ',', '.'); ?></strong>
+                      <strong>Rp <?= number_format($v['harga_jual'], 0, ',', '.'); ?></strong>
                   <?php endif; ?>
                 </td>
                 <td class="align-middle"><?= $v['stok']; ?></td>

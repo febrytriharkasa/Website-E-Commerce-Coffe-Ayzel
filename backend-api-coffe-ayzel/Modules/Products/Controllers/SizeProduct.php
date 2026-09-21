@@ -72,10 +72,18 @@ class SizeProduct extends BaseController
                     'is_unique' => 'Ukuran sudah ada.'
                     ]
             ],
-            'harga' => [
+            'harga_modal' => [
                 'rules'  => 'required|numeric|greater_than_equal_to[1000]',
                 'errors' => [
-                    'required'              => 'Masukkan harga kopi.',
+                    'required'              => 'Masukkan harga modal kopi.',
+                    'numeric'               => 'Harga harus berupa angka.',
+                    'greater_than_equal_to' => 'Harga minimal Rp. 1.000.',
+                ]
+            ],
+            'harga_jual' => [
+                'rules'  => 'required|numeric|greater_than_equal_to[1000]',
+                'errors' => [
+                    'required'              => 'Masukkan harga jual kopi.',
                     'numeric'               => 'Harga harus berupa angka.',
                     'greater_than_equal_to' => 'Harga minimal Rp. 1.000.',
                 ]
@@ -104,7 +112,8 @@ class SizeProduct extends BaseController
         $this->sizeModel->insert([
             'produk_id' => $this->request->getVar('produk_id'), // Langsung gunakan ID dari URL
             'ukuran'    => $ukuran,
-            'harga'     => $this->request->getVar('harga'),
+            'harga_modal' => $this->request->getVar('harga_modal'),
+            'harga_jual' => $this->request->getVar('harga_jual'),
             'stok'      => $this->request->getVar('stok'),
             'diskon'     => $this->request->getVar('diskon'),
             'tipe_diskon' => $this->request->getVar('tipe_diskon')
@@ -148,10 +157,18 @@ class SizeProduct extends BaseController
                     'is_unique' => 'Ukuran sudah ada.'
                     ]
             ],
-            'harga' => [
+            'harga_modal' => [
                 'rules'  => 'required|numeric|greater_than_equal_to[1000]',
                 'errors' => [
-                    'required'              => 'Masukkan harga kopi.',
+                    'required'              => 'Masukkan harga modal kopi.',
+                    'numeric'               => 'Harga harus berupa angka.',
+                    'greater_than_equal_to' => 'Harga minimal Rp. 1.000.',
+                ]
+            ],
+            'harga_jual' => [
+                'rules'  => 'required|numeric|greater_than_equal_to[1000]',
+                'errors' => [
+                    'required'              => 'Masukkan harga jual kopi.',
                     'numeric'               => 'Harga harus berupa angka.',
                     'greater_than_equal_to' => 'Harga minimal Rp. 1.000.',
                 ]
@@ -165,7 +182,8 @@ class SizeProduct extends BaseController
 
         $this->sizeModel->update($id, [
             'ukuran' => $this->request->getVar('ukuran'),
-            'harga'  => $this->request->getVar('harga'),
+            'harga_modal' => $this->request->getVar('harga_modal'),
+            'harga_jual' => $this->request->getVar('harga_jual'),
             'stok'   => $this->request->getVar('stok'),
             'diskon'     => $this->request->getVar('diskon'),
             'tipe_diskon' => $this->request->getVar('tipe_diskon')

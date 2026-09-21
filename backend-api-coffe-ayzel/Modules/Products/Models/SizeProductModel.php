@@ -12,12 +12,12 @@ class SizeProductModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['produk_id', 'ukuran', 'harga', 'stok', 'diskon', 'tipe_diskon'];
+    protected $allowedFields    = ['produk_id', 'ukuran', 'harga_modal', 'harga_jual', 'stok', 'diskon', 'tipe_diskon'];
 
     // Fungsi untuk mengatur diskon
     public function getDiskon($sizes)
     {
-        $harga = $sizes['harga'];
+        $harga_jual = $sizes['harga_jual'];
         $diskon = $sizes['diskon'];
 
         if ($diskon > 0)
@@ -25,14 +25,14 @@ class SizeProductModel extends Model
             // Rumus diskon
             if ($sizes['tipe_diskon'] === 'persen')
             {
-                $hargaDiskon = $harga - ($harga * ($diskon / 100)); // Rumus diskon persen
+                $hargaDiskon = $harga_jual - ($harga_jual * ($diskon / 100)); // Rumus diskon persen
             }else
             {
-                $hargaDiskon = $harga - $diskon;
+                $hargaDiskon = $harga_jual - $diskon;
             }
             return max(0, $hargaDiskon); // Cegah agar tidak mines
         }
-        return $harga;
+        return $harga_jual;
     }
 
     protected bool $allowEmptyInserts = false;
@@ -63,4 +63,5 @@ class SizeProductModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
 }
