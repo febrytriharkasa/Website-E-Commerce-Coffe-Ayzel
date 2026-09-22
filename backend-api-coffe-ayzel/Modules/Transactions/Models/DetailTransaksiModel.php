@@ -47,9 +47,9 @@ class DetailTransaksiModel extends Model
 
     public function getSizesProductsWithDetails($transaksiId)
     {
-        return $this->select('tb_detail_transaksi.*, tb_size_produk.ukuran, tb_produk.nama')
-        ->join('tb_size_produk', 'tb_size_produk.id = tb_detail_transaksi.size_product_id', 'left')
-        ->join('tb_size_product', 'tb_size_product.produk_id = tb_product.id', 'left')
+        return $this->select('tb_detail_transaksi.*, tb_size_product.ukuran, tb_product.nama')
+        ->join('tb_size_product', 'tb_size_product.id = tb_detail_transaksi.size_product_id', 'left')
+        ->join('tb_product', 'tb_size_product.produk_id = tb_product.id', 'left')
         ->where('tb_detail_transaksi.transaksi_id', $transaksiId)
         ->get()->getResultArray();
     }

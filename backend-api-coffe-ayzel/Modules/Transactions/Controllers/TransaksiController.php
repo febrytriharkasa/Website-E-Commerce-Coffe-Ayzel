@@ -29,7 +29,7 @@ class TransaksiController extends BaseController
         $data = [
             'title'     => 'Data Transaksi',
             // Gunakan paginate() untuk mendukung pagination di view
-            'transaksi' => $this->transaksiModel->orderBy('tgl_transaksi', 'DESC')->paginate(10, 'transaksi'),
+            'transaksi' => $this->transaksiModel->orderBy('tgl_transaksi', 'DESC')->paginate(5, 'transaksi'),
             'pager'     => $this->transaksiModel->pager // Kirim objek pager ke view
         ];
 
@@ -40,9 +40,7 @@ class TransaksiController extends BaseController
     {
         $data = [
             'title' => 'Tambah Transkasi',
-            'proudcts' => $this->sizeModel->select('tb_size_product.*, tb_product.nama')
-                                            ->join('tb_product', 'tb_product.id = tb_size_product.produk_id')
-                                            ->findAll()
+            'proudcts' => $this->sizeModel->getSizesWithNameProduct()
         ];
 
         return view('Modules\Transactions\Views\create', $data);
@@ -51,6 +49,7 @@ class TransaksiController extends BaseController
     public function store()
     {
         $tgl_transaksi = $this->request->getPost('tgl_transaksi');
+        $status_transaksi = $this->request->getPost('status_transaksi');
         $size_product_ids = $this->request->getPost('size_product_id');
         $qtys = $this->request->getPost('qty');
 
@@ -66,10 +65,13 @@ class TransaksiController extends BaseController
         $dataTransaksi = [
             'kode_transaksi' => 'TRX-' . date('YmdHis'),
             'tgl_transaksi' => $tgl_transaksi,
-            'total_pembayaran' => 0 // dibuat 0 dulu akan di update setelah menghuting detail transaksi
+            'total_pembayaran' => 0, // dibuat 0 dulu akan di update setelah menghuting detail transaksi
+            'status_transaksi' => $status_transaksi
         ];
 
         $this->transaksiModel->insert($dataTransaksi);
+
+        // Mengambil id dari tb_transaksi disimpan ke transaksi_id
         $transaksi_id = $this->transaksiModel->getInsertID();
 
         $totalPembayaran = 0;
@@ -81,6 +83,7 @@ class TransaksiController extends BaseController
 
             // Ambil data harga dari tb_size_produk
             $sizeData = $this->sizeModel->find($size_id);
+            $stok = $sizeData['stok'];
 
             // Hitung Harga dan stok
             $stok = $sizeData['stok'];
@@ -105,9 +108,15 @@ class TransaksiController extends BaseController
             // Akumulasi total pembayaran
             $totalPembayaran += $subtotal;
 
-            // Kurangi stok
+            // Kurangi stok lalu update
             $stok_baru = $stok - $qty;
             $this->sizeModel->update($size_id, ['stok' => $stok_baru]);
+
+            if ($qty > $stok) {
+
+                $this->db->transRollback();
+                return redirect()->back()->with('error', 'Transaksi dibatalkan karean stok tidak boleh lebih dari qty');
+            }
         }
 
         // Update total_pembayaran di tb_transaksi
@@ -123,6 +132,149 @@ class TransaksiController extends BaseController
         }
 
         return redirect()->to('/transaksi')->with('success', 'Transaksi berhasil ditambahkan');
+    }
+
+    public function edit($id)
+    {
+        $data = [
+            'Title' => 'Edit Transaksi',
+            'products' => $this->sizeModel->getSizesWithNameProduct(),
+            'detail' => $this->detailModel->getSizesProductsWithDetails($id),
+            'transaksi' => $this->transaksiModel->find($id)
+        ];
+
+        return view('Modules\Transactions\Views\edit', $data);
+    }
+
+    public function update($id)
+    {
+        // $tgl_transaksi = $this->request->getPost('tgl_transaksi');
+        $status_transaksi = $this->request->getPost('status_transaksi');
+        $size_product_ids = $this->request->getPost('size_product_id');
+        $qtys = $this->request->getPost('qty');
+        
+        if (empty($qtys)) {
+            return redirect()->back()->with('error', 'Stok tidak boleh kosong!');
+        }
+        
+        // Mulai database transaksi menggunakan transStart
+        $this->db->transStart();
+
+        // Cek status lama dari setiap transaksi
+        $transaksiLama = $this->transaksiModel->find($id);
+
+        // Sebelum detail dihapus, ambil data qty yang lama dan tambahkan kembali ke stok utama
+        $detailLama = $this->detailModel->where('transaksi_id', $id)->findAll();
+        
+        if ($transaksiLama['status_transaksi'] != 'batal') {
+            foreach ($detailLama as $old) {
+                $sizeLama = $this->sizeModel->find($old['size_product_id']);
+                if ($sizeLama) {
+                    $stokKembali = $sizeLama['stok'] + $old['qty'];
+                    $this->sizeModel->update($old['size_product_id'], ['stok' => $stokKembali]);
+                }
+            }
+        }
+
+        // Delete semua detail lama dan ulang insert
+        $this->detailModel->where('transaksi_id', $id)->delete();
+
+        $totalPembayaran = 0;
+
+        // looping dan insert ke tb_detail_transaksi
+        for ($i = 0; $i < count($size_product_ids); $i++) {
+            $size_id = $size_product_ids[$i];
+            $qty = $qtys[$i];
+
+            // Ambil data harga dari tb_size_produk
+            $sizeData = $this->sizeModel->find($size_id);
+            $stok = $sizeData['stok'];
+            
+            if ($status_transaksi != 'batal'){
+                if ($qty > $stok) {
+                    // Batalkan semua proses (termasuk pengembalian stok dan penghapusan detail lama)
+                    $this->db->transRollback(); 
+                    
+                    return redirect()->back()->withInput()->with('error', 'Update dibatalkan! Qty melebihi stok. Sisa stok tersedia untuk salah satu produk: ' . $stok);
+                }
+            }
+            
+            // Hitung Harga dan stok
+            $stok = $sizeData['stok'];
+            $harga_modal = $sizeData['harga_modal'];
+            $harga_satuan = $this->sizeModel->getDiskon($sizeData);
+
+            $subtotal_modal = $harga_modal * $qty;
+            $subtotal = $harga_satuan * $qty;
+
+            $dataDetail = [
+                'transaksi_id' => $id,
+                'size_product_id' => $size_id,
+                'qty' => $qty,
+                'harga_modal' => $harga_modal,
+                'harga_satuan' => $harga_satuan,
+                'subtotal_modal' => $subtotal_modal,
+                'subtotal' => $subtotal
+            ];
+
+            $this->detailModel->insert($dataDetail);
+
+            // Akumulasi total pembayaran
+            $totalPembayaran += $subtotal;
+
+            if ($status_transaksi != 'batal') {
+                // Kurangi stok lalu update
+                $stok_baru = $stok - $qty;
+                $this->sizeModel->update($size_id, ['stok' => $stok_baru]);
+            }
+        }
+
+        // Update total_pembayaran di tb_transaksi
+        $this->transaksiModel->update($id, [
+            'total_pembayaran' => $totalPembayaran,
+            'status_transaksi' => $status_transaksi
+        ]);
+
+        // Selesaikan Transaction Database
+        $this->db->transComplete();
+
+        if ($this->db->transStatus() === false) {
+            return redirect()->back()->with('error', 'Gagal edit transaksi.');
+        }
+
+        return redirect()->to('/transaksi')->with('success', 'Transaksi berhasil diedit');
+    }
+
+    public function delete ($id)
+    {
+        $this->db->transStart();
+        $transaksiLama = $this->transaksiModel->find($id);
+
+        $detailLama = $this->detailModel->where('transaksi_id', $id)->findAll();
+
+        if ($transaksiLama['status_transaksi'] != 'batal') {
+            foreach ($detailLama as $old) {
+                $sizeLama = $this->sizeModel->find($old['size_product_id']);
+                if ($sizeLama) {
+                    $stokKembali = $sizeLama['stok'] + $old['qty'];
+                    $this->sizeModel->update($old['size_product_id'], ['stok' => $stokKembali]);
+                }
+            }
+        }
+
+        // Hapus detail transaksi terlebih dahulu untuk mencegah error
+        $this->detailModel->where('transaksi_id', $id)->delete();
+
+        // Hapus tabel transaksi
+        $this->transaksiModel->delete($id);
+
+        $this->db->transComplete();
+
+        if ($this->db->transStatus() === false) {
+            return redirect()->back()->with('error', 'Data gagal dihapus!');
+        }
+
+        return redirect()->to('/transaksi')->with('success', 'Data berhasil dihapus!');
     }
 
 }

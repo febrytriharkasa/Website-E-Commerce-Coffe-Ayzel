@@ -184,7 +184,7 @@
         <?php endforeach; ?>
         <?php if(empty($product)): ?>
           <tr>
-              <td colspan="6" class="text-center">Belum ada data produk.</td>
+              <td colspan="7" class="text-center">Belum ada data produk.</td>
           </tr>
         <?php endif; ?>
       </tbody>

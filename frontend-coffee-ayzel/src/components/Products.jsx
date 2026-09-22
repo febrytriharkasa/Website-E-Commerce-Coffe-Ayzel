@@ -32,13 +32,7 @@ function tagColor(tag) {
 
 export default function Products() {
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('cart')) || {};
-    } catch {
-      return {};
-    }
-  });
+  const [cart, setCart] = useState({});
   const [showCart, setShowCart] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState({});
   const [search, setSearch] = useState('');
@@ -50,10 +44,6 @@ export default function Products() {
     };
     fetchData();
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
 
   const getCartKey = (id, size) => `${id}|${size}`;
 
@@ -231,7 +221,7 @@ export default function Products() {
                                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                               }`}
                             >
-                              {sizeOption}
+                              {sizeOption} L
                             </button>
                           ))}
                         </div>
@@ -288,7 +278,7 @@ export default function Products() {
                           )}
                         </div>
                       </div>
-                      </div>
+</div>
                     </motion.div>
                 );
               })}

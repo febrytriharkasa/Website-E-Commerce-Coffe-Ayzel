@@ -9,7 +9,8 @@ $routes->group('transaksi', ['namespace' => 'Modules\Transactions\Controllers'],
     $routes->get('/', 'TransaksiController::index');
     $routes->get('create', 'TransaksiController::create');
     $routes->post('store', 'TransaksiController::store');
-    // $routes->get('edit/(:num)', 'TransaksiController::edit/$1');
-    // $routes->post('update/(:num)', 'TransaksiController::update/$1');
-    // $routes->delete('delete/(:num)', 'TransaksiController::delete/$1');
+    $routes->get('edit/(:num)', 'TransaksiController::edit/$1');
+    $routes->post('update/(:num)', 'TransaksiController::update/$1');
+    $routes->delete('delete/(:num)', 'TransaksiController::delete/$1');
+    // Sesuaikan nama controller-nya
 });

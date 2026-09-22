@@ -55,6 +55,7 @@
             <th width="15%">Tanggal</th>
             <th width="20%">Kode Transaksi</th> 
             <th>Total Pembayaran</th>
+            <th>Status Transaksi</th>
             <th width="20%" class="text-center">Aksi</th>
         </tr>
       </thead>
@@ -70,6 +71,13 @@
             <td class="fw-bold text-success">
                 Rp <?= number_format($t['total_pembayaran'], 0, ',', '.'); ?>
             </td>
+            <?php if ($t['status_transaksi'] == 'batal') : ?>
+            <td><span class="badge-table failed"><?= $t['status_transaksi']; ?></span></td>
+            <?php elseif ($t['status_transaksi'] == 'pending') : ?>
+            <td><span class="badge-table pending"><?= $t['status_transaksi']; ?></span></td>
+            <?php elseif ($t['status_transaksi'] == 'selesai') : ?>
+            <td><span class="badge-table success"><?= $t['status_transaksi']; ?></span></td>
+            <?php endif; ?>
             <td>
               <div class="d-flex justify-content-center gap-1">
                 <!-- Tombol Detail -->
@@ -103,7 +111,12 @@
                       <p class="mb-1 text-muted">Apakah Anda yakin ingin menghapus transaksi ini?</p>
                       <h5 class="fw-bold text-dark mt-2"><?= $t['kode_transaksi']; ?></h5>
                       <p class="mb-0 text-muted small">Tanggal: <?= date('d/m/Y', strtotime($t['tgl_transaksi'])); ?></p>
-                      <small class="text-danger mt-3 d-block">Perhatian: Semua data detail barang di dalam transaksi ini juga akan ikut terhapus permanen!</small>
+                      
+                      <!-- BAGIAN YANG DIPERBAIKI -->
+                      <small class="text-danger mt-3 d-block text-wrap" style="white-space: normal; word-break: break-word;">
+                        Perhatian: Semua data detail barang di dalam transaksi ini juga akan ikut terhapus permanen!
+                      </small>
+                      
                     </div>
                     <div class="modal-footer border-0 pt-0 justify-content-center gap-2">
                       <button type="button" class="btn-custom btn-custom-light px-4" data-bs-dismiss="modal">Batal</button>
@@ -122,7 +135,7 @@
         
         <?php if(empty($transaksi)): ?>
           <tr>
-              <td colspan="5" class="text-center py-4 text-muted">Belum ada data transaksi.</td>
+              <td colspan="6" class="text-center py-4 text-muted">Belum ada data transaksi.</td>
           </tr>
         <?php endif; ?>
       </tbody>

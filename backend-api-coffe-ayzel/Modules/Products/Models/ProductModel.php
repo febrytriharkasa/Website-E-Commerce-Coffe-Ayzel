@@ -10,7 +10,7 @@ class ProductModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = ['gambar', 'nama', 'deskripsi'];
 
@@ -25,6 +25,7 @@ class ProductModel extends Model
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
+    protected $deletedField  = 'deleted_at';
 
     // Validation
     protected $validationRules      = [];
@@ -42,12 +43,5 @@ class ProductModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-    // Tambahkan fungsi ini di dalam class ProductModel
-    public function getProductsWithSizes()
-    {
-        return $this->select('tb_product.id, tb_product.nama, tb_product.gambar, tb_size_product.ukuran, tb_size_product.harga, tb_size_product.stok')
-                    ->join('tb_size_product', 'tb_size_product.produk_id = tb_product.id', 'left')
-                    ->findAll();
-    }
+    
 }

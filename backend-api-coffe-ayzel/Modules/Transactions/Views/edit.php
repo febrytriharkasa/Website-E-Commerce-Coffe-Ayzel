@@ -16,13 +16,13 @@
 <!-- START: Page Header Banner -->
 <div class="page-header">
   <div>
-    <h1 class="page-title">Tambah Transaksi Baru</h1>
+    <h1 class="page-title">Edit Transaksi</h1>
   </div>
 </div>
 <!-- END: Page Header Banner -->
 
 <!-- START: Form Component Row Grid Layout -->
-<form action="/transaksi/store" method="POST">
+<form action="/transaksi/update/<?= $transaksi['id']; ?>" method="POST">
   <?= csrf_field(); ?> 
   
   <div class="row g-4 mb-4">
@@ -39,7 +39,7 @@
             class="form-control-custom <?= (validation_show_error('tgl_transaksi')) ? 'is-invalid' : ''; ?>" 
             id="tgl_transaksi" 
             name="tgl_transaksi" 
-            value="<?= old('tgl_transaksi', date('Y-m-d\TH:i')); ?>" 
+            value="<?= old('tgl_transaksi', date('Y-m-d\TH:i', strtotime($transaksi['tgl_transaksi']))); ?>" 
             required>
           <div class="form-feedback-custom invalid-custom">
             <?= validation_show_error('tgl_transaksi'); ?>
@@ -50,15 +50,19 @@
         <!-- Dropdown Status Transaksi -->
         <div class="mb-3">
           <label for="status_transaksi" class="form-label-custom">Status Transaksi</label>
+          <?php 
+               $statusSaatIni = old('status_transaksi', $transaksi['status_transaksi']);
+            
+            ?>
           <select name="status_transaksi" id="status_transaksi" class="form-control-custom <?= (validation_show_error('status_transaksi')) ? 'is-invalid' : ''; ?>" required>
-              <option value="pending" <?= old('status_transaksi') ; ?>>Pending (Menunggu Pembayaran)</option>
-              <option value="selesai" <?= old('status_transaksi') ; ?>>Selesai (Sudah Lunas)</option>
+              <option value="pending" <?= ($statusSaatIni == 'pending') ? 'selected' : ''; ?>>Pending (Menunggu Pembayaran)</option>
+              <option value="selesai" <?= ($statusSaatIni == 'selesai') ? 'selected' : ''; ?>>Selesai (Sudah Lunas)</option>
+              <option value="batal" <?= ($statusSaatIni == 'batal') ? 'selected' : ''; ?>>Batal (Dibatalkan)</option>
           </select>
           <div class="form-feedback-custom invalid-custom">
             <?= validation_show_error('status_transaksi'); ?>
           </div>
         </div>
-        
       </div>
     </div>
 
@@ -83,29 +87,43 @@
                     </tr>
                 </thead>
                 <tbody id="tbodyProduk">
-                    <!-- Baris Pertama (Default) -->
+                <!-- 1. Perulangan diletakkan di LUAR tag <tr> agar setiap barang yang dibeli dibuatkan barisnya -->
+                <?php foreach ($detail as $index => $d) : ?>
                     <tr>
+                        <!-- Kolom Produk & Ukuran -->
                         <td>
                             <select name="size_product_id[]" class="form-control-custom" required>
-                                <option value="" selected disabled>-- Pilih Produk --</option>
-                                <?php foreach($proudcts as $p) : ?>
-                                    <!-- Menampilkan Nama Produk, Ukuran, dan Harga Jual di dropdown -->
-                                    <option value="<?= $p['id']; ?>">
+                                <option value="" disabled>-- Pilih Produk --</option>
+                                <?php foreach($products as $p) : ?>
+                                    <?php 
+                                        // 2. Logika perbandingan yang benar:
+                                        // Cek apakah ID opsi ini sama dengan size_product_id dari tabel detail transaksi
+                                        $isMatch = ($d['size_product_id'] == $p['id']);
+                                        
+                                        // Gunakan index array pada old() agar data tidak tertukar saat error validasi
+                                        $isSelected = (old('size_product_id.'.$index, $d['size_product_id']) == $p['id']) ? 'selected' : ''; 
+                                    ?>
+                                    <option value="<?= $p['id']; ?>" <?= $isSelected; ?>>
                                         <?= $p['nama']; ?> - <?= $p['ukuran']; ?> (Rp <?= number_format($p['harga_jual'], 0, ',', '.'); ?>)
                                     </option>
                                 <?php endforeach; ?>
                             </select>
                         </td>
+                        
+                        <!-- Kolom Qty -->
                         <td>
-                            <input type="number" name="qty[]" class="form-control-custom" min="1" value="1" placeholder="Qty" required>
+                            <input type="number" name="qty[]" class="form-control-custom" min="1" value="<?= old('qty.'.$index, $d['qty']) ?>" placeholder="Qty" required>
                         </td>
+                        
+                        <!-- Kolom Aksi Hapus -->
                         <td class="text-center">
-                            <button type="button" class="btn-custom btn-custom-danger btn-custom-sm btnHapusBaris" disabled title="Minimal 1 produk">
+                            <button type="button" class="btn-custom btn-custom-danger btn-custom-sm btnHapusBaris" <?= (count($detail) == 1) ? 'disabled title="Minimal 1 produk"' : ''; ?>>
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
                     </tr>
-                </tbody>
+                <?php endforeach; ?>
+            </tbody>
             </table>
         </div>
 
@@ -169,6 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
 </script>
 
 <?= $this->endSection(); ?>

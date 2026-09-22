@@ -12,7 +12,7 @@ class TransaksiModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['kode_transaksi', 'tgl_transaksi', 'total_pembayaran'];
+    protected $allowedFields    = ['kode_transaksi', 'tgl_transaksi', 'total_pembayaran', 'status_transaksi'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -43,13 +43,4 @@ class TransaksiModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getTransaksi($id = null)
-    {
-        if ($id === null) {
-            return $this->orderBy('tgl_transaksi', 'DESC')->findAll();
-        }
-        
-        return $this->where('id', $id)->first();
-    }
-    
 }

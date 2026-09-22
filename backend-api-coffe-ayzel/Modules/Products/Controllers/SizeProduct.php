@@ -23,11 +23,7 @@ class SizeProduct extends BaseController
 
         $limit = $this->request->getVar('limit') ?? 5;
 
-        $product = $this->productModel->paginate($limit, 'size_product');
-
-        if (empty($product)) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException("Produk Tidak Ditemukan");
-        }
+        $product = $this->productModel->select('id, nama')->paginate($limit, 'size_product');
 
         foreach ($product as &$p) {
             $sizes = $this->sizeModel->where('produk_id', $p['id'])->findAll();
