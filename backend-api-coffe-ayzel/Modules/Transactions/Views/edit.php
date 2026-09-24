@@ -10,9 +10,6 @@
     </div>
 <?php endif; ?>
 
-<!-- ==========================================
-        START: Main Content Area
-        ========================================== -->
 <!-- START: Page Header Banner -->
 <div class="page-header">
   <div>
@@ -21,7 +18,6 @@
 </div>
 <!-- END: Page Header Banner -->
 
-<!-- START: Form Component Row Grid Layout -->
 <form action="/transaksi/update/<?= $transaksi['id']; ?>" method="POST">
   <?= csrf_field(); ?> 
   
@@ -44,16 +40,12 @@
           <div class="form-feedback-custom invalid-custom">
             <?= validation_show_error('tgl_transaksi'); ?>
           </div>
-          <div class="form-text mt-2">Format: Bulan/Tanggal/Tahun Jam:Menit</div>
         </div>
 
         <!-- Dropdown Status Transaksi -->
         <div class="mb-3">
           <label for="status_transaksi" class="form-label-custom">Status Transaksi</label>
-          <?php 
-               $statusSaatIni = old('status_transaksi', $transaksi['status_transaksi']);
-            
-            ?>
+          <?php $statusSaatIni = old('status_transaksi', $transaksi['status_transaksi']); ?>
           <select name="status_transaksi" id="status_transaksi" class="form-control-custom <?= (validation_show_error('status_transaksi')) ? 'is-invalid' : ''; ?>" required>
               <option value="pending" <?= ($statusSaatIni == 'pending') ? 'selected' : ''; ?>>Pending (Menunggu Pembayaran)</option>
               <option value="selesai" <?= ($statusSaatIni == 'selesai') ? 'selected' : ''; ?>>Selesai (Sudah Lunas)</option>
@@ -72,7 +64,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="card-title mb-0">Daftar Produk</h5>
             <button type="button" class="btn-custom btn-custom-info btn-custom-sm" id="btnTambahProduk">
-                <i class="bi bi-plus-lg"></i> Tambah Baris
+                <i class="bi bi-plus-lg"></i> Tambah Baris Baru
             </button>
         </div>
 
@@ -87,7 +79,6 @@
                     </tr>
                 </thead>
                 <tbody id="tbodyProduk">
-                <!-- 1. Perulangan diletakkan di LUAR tag <tr> agar setiap barang yang dibeli dibuatkan barisnya -->
                 <?php foreach ($detail as $index => $d) : ?>
                     <tr>
                         <!-- Kolom Produk & Ukuran -->
@@ -96,15 +87,18 @@
                                 <option value="" disabled>-- Pilih Produk --</option>
                                 <?php foreach($products as $p) : ?>
                                     <?php 
-                                        // 2. Logika perbandingan yang benar:
-                                        // Cek apakah ID opsi ini sama dengan size_product_id dari tabel detail transaksi
                                         $isMatch = ($d['size_product_id'] == $p['id']);
-                                        
-                                        // Gunakan index array pada old() agar data tidak tertukar saat error validasi
                                         $isSelected = (old('size_product_id.'.$index, $d['size_product_id']) == $p['id']) ? 'selected' : ''; 
+                                        
+                                        // Pembeda visual untuk harga lama vs harga master baru
+                                        if ($isMatch) {
+                                            $labelHarga = 'Rp ' . number_format($d['harga_satuan'], 0, ',', '.') . ' (Tersimpan)';
+                                        } else {
+                                            $labelHarga = 'Rp ' . number_format($p['harga_jual'], 0, ',', '.') . ' (Master)';
+                                        }
                                     ?>
                                     <option value="<?= $p['id']; ?>" <?= $isSelected; ?>>
-                                        <?= $p['nama']; ?> - <?= $p['ukuran']; ?> (Rp <?= number_format($p['harga_jual'], 0, ',', '.'); ?>)
+                                        <?= $p['nama']; ?> - <?= $p['ukuran']; ?> - <?= $labelHarga; ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -129,15 +123,14 @@
 
         <div class="d-flex justify-content-between mt-4">
           <a href="/transaksi" class="btn-custom btn-custom-light" type="button">Kembali</a>
-          <button class="btn-custom btn-custom-primary" type="submit" id="btnSubmit">Simpan Transaksi</button>
+          <button class="btn-custom btn-custom-primary" type="submit" id="btnSubmit">Simpan Pembaruan</button>
         </div>
       </div>
     </div>
   </div>
 </form>
-<!-- END: Form Component Row Grid Layout -->
 
-<!-- Script untuk Dynamic Form (Tambah/Hapus Baris Produk) -->
+<!-- Script untuk Dynamic Form -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const btnTambah = document.getElementById('btnTambahProduk');
@@ -151,13 +144,23 @@ document.addEventListener('DOMContentLoaded', function() {
         // Append baris baru
         tbody.insertAdjacentHTML('beforeend', rowTemplate);
         
+        // Ambil elemen baris yang baru saja ditambahkan (paling bawah)
+        const newRow = tbody.lastElementChild;
+        
+        // Reset nilai select ke default agar tidak meniru baris pertama
+        const selectBox = newRow.querySelector('select');
+        if (selectBox) selectBox.value = "";
+        
+        // Reset nilai qty 
+        const inputQty = newRow.querySelector('input[type="number"]');
+        if (inputQty) inputQty.value = "";
+        
         // Aktifkan semua tombol hapus (karena baris > 1)
         updateDeleteButtons();
     });
 
     // Fungsi Hapus Baris (Event Delegation)
     tbody.addEventListener('click', function(e) {
-        // Cari tombol hapus terdekat yang diklik
         const btnHapus = e.target.closest('.btnHapusBaris');
         
         if (btnHapus) {
@@ -175,11 +178,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const deleteButtons = tbody.querySelectorAll('.btnHapusBaris');
         
         if (rows.length === 1) {
-            // Jika sisa 1 baris, matikan tombol hapus
             deleteButtons[0].disabled = true;
             deleteButtons[0].setAttribute('title', 'Minimal 1 produk');
         } else {
-            // Jika lebih dari 1 baris, nyalakan semua tombol hapus
             deleteButtons.forEach(btn => {
                 btn.disabled = false;
                 btn.removeAttribute('title');
@@ -187,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-
 </script>
 
 <?= $this->endSection(); ?>

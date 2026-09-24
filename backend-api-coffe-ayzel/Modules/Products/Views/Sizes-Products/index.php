@@ -11,6 +11,14 @@
     </div>
 <?php endif; ?>
 
+<!-- Alert Error -->
+<?php if (session()->getFlashdata('error')) : ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?= session()->getFlashdata('error'); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
 <!-- START: Basic Table Card Container -->
 <div class="table-card-custom">
   <!-- Header Controls -->
@@ -100,17 +108,17 @@
                     <!-- Edit -->
                     <a href="/sizes-product/edit/<?= $v['id']; ?>" class="btn-custom btn-custom-warning btn-custom-sm" title="Edit row"><i class="bi bi-pencil"></i></a>
                     <!-- Delete -->
-                    <button type="button" class="btn-custom btn-custom-danger btn-custom-sm" title="Hapus" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $p['id']; ?>">
+                    <button type="button" class="btn-custom btn-custom-danger btn-custom-sm" title="Hapus" data-bs-toggle="modal" data-bs-target="#deleteUkuran<?= $p['id']; ?>">
                         <i class="bi bi-trash"></i>
                     </button>
                   </div>
 
                   <!-- Delete Confirmation Pop Up -->
-                  <div class="modal fade" id="deleteModal<?= $v['id']; ?>" tabindex="-1" aria-labelledby="deleteModalLabel<?= $p['id']; ?>" aria-hidden="true">
+                  <div class="modal fade" id="deleteUkuran<?= $v['id']; ?>" tabindex="-1" aria-labelledby="deleteUkuranLabel<?= $p['id']; ?>" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                       <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
                         <div class="modal-header border-0 pb-0">
-                          <h5 class="modal-title font-weight-bold" id="deleteModalLabel<?= $p['id']; ?>">Konfirmasi Hapus</h5>
+                          <h5 class="modal-title font-weight-bold" id="deleteUkuranLabel<?= $p['id']; ?>">Konfirmasi Hapus</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body text-center py-4">

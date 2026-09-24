@@ -3,6 +3,28 @@
 <?= $this->extend('layout/template'); ?>
 <?= $this->section('content'); ?>
 
+<!-- Alert Error -->
+<?php if (session()->getFlashdata('error')) : ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?= session()->getFlashdata('error'); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
+<?php
+    // Logika PHP untuk memecah nilai old() jika form gagal validasi
+    // Contoh: "250 ml" dipecah menjadi angka "250" dan satuan "ml"
+    $oldUkuran = old('ukuran', $sizes['ukuran']);
+    $angka     = '';
+    $satuan    = 'ml'; // Default satuan
+
+    if ($oldUkuran) {
+        $parts  = explode(' ', $oldUkuran);
+        $angka  = $parts[0] ?? '';
+        $satuan = $parts[1] ?? 'ml';
+    }
+?>
+
 <div class="row">
     <div class="col-md-8 col-lg-6">
         <div class="card shadow-sm border-0">
@@ -40,16 +62,40 @@
 
                     <!-- 2. Ukuran -->
                     <div class="mb-3">
-                        <label for="ukuran" class="form-label">Ukuran <span class="text-danger">*</span></label>
+                    <label for="ukuran_angka" class="form-label-custom">Ukuran Varian Kopi</label>
+                    
+                    <!-- Input Hidden: Ini yang sebenarnya dikirim ke Controller dan Database -->
+                    <input type="hidden" name="ukuran" id="ukuran_final" value="<?= esc($oldUkuran); ?>">
+
+                    <!-- Tampilan Visual (Input Group Bootstrap) -->
+                    <div class="input-group">
+                        <!-- Input Angka -->
                         <input 
-                            type="text" 
-                            class="form-control <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" 
-                            id="ukuran" 
-                            name="ukuran" 
-                            value="<?= old('ukuran' , $sizes['ukuran']); ?>" 
-                            placeholder="Contoh: 200gr" 
+                            type="number" 
+                            class="form-control-custom form-control <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" 
+                            id="ukuran_angka" 
+                            value="<?= $angka; ?>" 
+                            placeholder="Contoh: 250" 
+                            oninput="gabungkanUkuran()"
                             required>
-                        <div class="invalid-feedback"><?= validation_show_error('ukuran'); ?></div>
+                        
+                        <!-- Dropdown Satuan -->
+                        <select 
+                            class="form-select <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" 
+                            id="ukuran_satuan" 
+                            onchange="gabungkanUkuran()" 
+                            style="max-width: 100px; cursor: pointer;">
+                            <option value="ml" <?= ($satuan == 'ml') ? 'selected' : ''; ?>>ml</option>
+                            <option value="L" <?= ($satuan == 'L') ? 'selected' : ''; ?>>L</option>
+                        </select>
+                    </div>
+
+                    <!-- Pesan Error Validasi -->
+                    <?php if(validation_show_error('ukuran')): ?>
+                        <div class="form-text text-danger mt-1">
+                            <?= validation_show_error('ukuran'); ?>
+                        </div>
+                    <?php endif; ?>
                     </div>
 
                     <!-- 3. Harga Modal -->
@@ -125,5 +171,25 @@
         </div>
     </div>
 </div>
+
+<script>
+    function gabungkanUkuran() {
+        const angka = document.getElementById('ukuran_angka').value;
+        const satuan = document.getElementById('ukuran_satuan').value;
+        const finalInput = document.getElementById('ukuran_final');
+        
+        if (angka !== "") {
+            finalInput.value = angka + ' ' + satuan;
+        } else {
+            finalInput.value = ''; 
+        }
+    }
+
+    // TAMBAHKAN BARIS INI: 
+    // Memicu fungsi di atas secara otomatis saat halaman selesai di-load
+    document.addEventListener('DOMContentLoaded', function() {
+        gabungkanUkuran();
+    });
+</script>
 
 <?= $this->endSection(); ?>

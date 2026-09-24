@@ -85,8 +85,7 @@ class TransaksiController extends BaseController
             $sizeData = $this->sizeModel->find($size_id);
             $stok = $sizeData['stok'];
 
-            // Hitung Harga dan stok
-            $stok = $sizeData['stok'];
+            // Hitung Harga
             $harga_modal = $sizeData['harga_modal'];
             $harga_satuan = $this->sizeModel->getDiskon($sizeData);
 
@@ -148,7 +147,6 @@ class TransaksiController extends BaseController
 
     public function update($id)
     {
-        // $tgl_transaksi = $this->request->getPost('tgl_transaksi');
         $status_transaksi = $this->request->getPost('status_transaksi');
         $size_product_ids = $this->request->getPost('size_product_id');
         $qtys = $this->request->getPost('qty');
@@ -157,22 +155,37 @@ class TransaksiController extends BaseController
             return redirect()->back()->with('error', 'Stok tidak boleh kosong!');
         }
         
-        // Mulai database transaksi menggunakan transStart
         $this->db->transStart();
 
-        // Cek status lama dari setiap transaksi
         $transaksiLama = $this->transaksiModel->find($id);
-
-        // Sebelum detail dihapus, ambil data qty yang lama dan tambahkan kembali ke stok utama
         $detailLama = $this->detailModel->where('transaksi_id', $id)->findAll();
         
+        // 1. Simpan riwayat harga lama ke dalam array sebelum detail dihapus
+        // Ini berfungsi untuk "membekukan" harga agar tidak ikut harga master terbaru
+        $hargaBeku = [];
+
         if ($transaksiLama['status_transaksi'] != 'batal') {
             foreach ($detailLama as $old) {
+                // Simpan harga lama berdasarkan ID produk
+                $hargaBeku[$old['size_product_id']] = [
+                    'harga_modal'  => $old['harga_modal'],
+                    'harga_satuan' => $old['harga_satuan']
+                ];
+
+                // Kembalikan stok lama
                 $sizeLama = $this->sizeModel->find($old['size_product_id']);
                 if ($sizeLama) {
                     $stokKembali = $sizeLama['stok'] + $old['qty'];
                     $this->sizeModel->update($old['size_product_id'], ['stok' => $stokKembali]);
                 }
+            }
+        } else {
+            // Jika status lama batal, kita tetap perlu menyimpan harga lamanya
+            foreach ($detailLama as $old) {
+                $hargaBeku[$old['size_product_id']] = [
+                    'harga_modal'  => $old['harga_modal'],
+                    'harga_satuan' => $old['harga_satuan']
+                ];
             }
         }
 
@@ -181,61 +194,61 @@ class TransaksiController extends BaseController
 
         $totalPembayaran = 0;
 
-        // looping dan insert ke tb_detail_transaksi
         for ($i = 0; $i < count($size_product_ids); $i++) {
             $size_id = $size_product_ids[$i];
             $qty = $qtys[$i];
 
-            // Ambil data harga dari tb_size_produk
+            // Ambil data dari master HANYA untuk mengecek sisa stok terbaru
             $sizeData = $this->sizeModel->find($size_id);
             $stok = $sizeData['stok'];
             
             if ($status_transaksi != 'batal'){
                 if ($qty > $stok) {
-                    // Batalkan semua proses (termasuk pengembalian stok dan penghapusan detail lama)
                     $this->db->transRollback(); 
-                    
-                    return redirect()->back()->withInput()->with('error', 'Update dibatalkan! Qty melebihi stok. Sisa stok tersedia untuk salah satu produk: ' . $stok);
+                    return redirect()->back()->withInput()->with('error', 'Update dibatalkan! Qty melebihi stok. Sisa stok tersedia: ' . $stok);
                 }
             }
             
-            // Hitung Harga dan stok
-            $stok = $sizeData['stok'];
-            $harga_modal = $sizeData['harga_modal'];
-            $harga_satuan = $this->sizeModel->getDiskon($sizeData);
+            // 2. LOGIKA HARGA (FROZEN PRICE)
+            // Cek apakah produk ini sudah ada di transaksi lama?
+            if (isset($hargaBeku[$size_id])) {
+                // Jika ya, gunakan harga saat transaksi itu dibuat
+                $harga_modal  = $hargaBeku[$size_id]['harga_modal'];
+                $harga_satuan = $hargaBeku[$size_id]['harga_satuan'];
+            } else {
+                // Jika tidak (berarti admin menambah item BARU ke transaksi ini), ambil harga terbaru
+                $harga_modal  = $sizeData['harga_modal'];
+                $harga_satuan = $this->sizeModel->getDiskon($sizeData);
+            }
 
             $subtotal_modal = $harga_modal * $qty;
-            $subtotal = $harga_satuan * $qty;
+            $subtotal       = $harga_satuan * $qty;
 
             $dataDetail = [
-                'transaksi_id' => $id,
+                'transaksi_id'    => $id,
                 'size_product_id' => $size_id,
-                'qty' => $qty,
-                'harga_modal' => $harga_modal,
-                'harga_satuan' => $harga_satuan,
-                'subtotal_modal' => $subtotal_modal,
-                'subtotal' => $subtotal
+                'qty'             => $qty,
+                'harga_modal'     => $harga_modal,
+                'harga_satuan'    => $harga_satuan,
+                'subtotal_modal'  => $subtotal_modal,
+                'subtotal'        => $subtotal
             ];
 
             $this->detailModel->insert($dataDetail);
 
-            // Akumulasi total pembayaran
             $totalPembayaran += $subtotal;
 
             if ($status_transaksi != 'batal') {
-                // Kurangi stok lalu update
                 $stok_baru = $stok - $qty;
                 $this->sizeModel->update($size_id, ['stok' => $stok_baru]);
             }
         }
 
-        // Update total_pembayaran di tb_transaksi
         $this->transaksiModel->update($id, [
             'total_pembayaran' => $totalPembayaran,
             'status_transaksi' => $status_transaksi
         ]);
 
-        // Selesaikan Transaction Database
         $this->db->transComplete();
 
         if ($this->db->transStatus() === false) {

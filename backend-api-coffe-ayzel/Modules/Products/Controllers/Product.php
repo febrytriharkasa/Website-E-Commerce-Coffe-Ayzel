@@ -59,11 +59,10 @@ class Product extends BaseController
                 ]
             ],
             'nama' => [
-                'rules' => 'required|max_length[100]|is_unique[tb_product.nama]',
+                'rules' => 'required|max_length[100]',
                 'errors'=> [
                     'required'      => 'Nama jenis kopi harus diisi.',
                     'max_length'    => 'Nama terlalu panjang (maksimal 100 karakter).',
-                    'is_unique'     => 'Jenis nama kopi sudah ada.'
                 ]
             ],
             'deskripsi' => [
@@ -77,6 +76,16 @@ class Product extends BaseController
         ])) {
             // Cukup dengan withInput(), CI4 menyimpan error ke session secara otomatis
             return redirect()->to('/product/create')->withInput();
+        }
+
+        $nama = $this->request->getVar('nama');
+
+        $cekNamaSama = $this->productModel->where('nama', $nama)
+                                        ->first();
+
+        // Jika data ditemukan, berarti Nama tersebut sudah ada di produk ini
+        if ($cekNamaSama) {
+            return redirect()->back()->withInput()->with('error', 'Gagal! "' . $nama . '" sudah ada di produk ini. Silakan buat nama lain.');
         }
 
         // Mengambil gambar getFile

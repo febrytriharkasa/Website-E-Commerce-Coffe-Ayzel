@@ -14,3 +14,17 @@ $routes->group('transaksi', ['namespace' => 'Modules\Transactions\Controllers'],
     $routes->delete('delete/(:num)', 'TransaksiController::delete/$1');
     // Sesuaikan nama controller-nya
 });
+
+// Approvel Transaksi
+$routes->group('transaksi-approvel', ['namespace' => 'Modules\Transactions\Controllers'], static function ($routes) {
+    $routes->get('/', 'ApprovelTransaksiController::index');
+    $routes->post('approvel-accept/(:num)', 'ApprovelTransaksiController::approvelTransaksiAccept/$1');
+    $routes->post('approvel-reject/(:num)', 'ApprovelTransaksiController::approvelTransaksiReject/$1');
+    // Sesuaikan nama controller-nya
+});
+
+// API
+$routes->group('api', ['namespace' => 'Modules\Transactions\Controllers\Api'], static function ($routes) {
+    // Gunakan match untuk mengizinkan POST dan OPTIONS ke fungsi store
+    $routes->match(['post', 'options'], 'transaksi', 'Transaksi::store');
+});

@@ -65,8 +65,7 @@ class SizeProduct extends BaseController
                 'rules'  => 'required',
                 'errors' => [
                     'required' => 'Masukkan ukuran varian, contoh: 200gr.',
-                    'is_unique' => 'Ukuran sudah ada.'
-                    ]
+                ]
             ],
             'harga_modal' => [
                 'rules'  => 'required|numeric|greater_than_equal_to[1000]',
@@ -150,7 +149,6 @@ class SizeProduct extends BaseController
                 'rules'  => 'required',
                 'errors' => [
                     'required' => 'Masukkan ukuran varian, contoh: 200gr.',
-                    'is_unique' => 'Ukuran sudah ada.'
                     ]
             ],
             'harga_modal' => [

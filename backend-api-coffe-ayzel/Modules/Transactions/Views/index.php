@@ -91,17 +91,17 @@
                 </a>
                 
                 <!-- Tombol Hapus -->
-                <button type="button" class="btn-custom btn-custom-danger btn-custom-sm" title="Hapus" data-bs-toggle="modal" data-bs-target="#deleteModal<?= $t['id']; ?>">
+                <button type="button" class="btn-custom btn-custom-danger btn-custom-sm" title="Hapus" data-bs-toggle="modal" data-bs-target="#deleteTranksasi<?= $t['id']; ?>">
                     <i class="bi bi-trash"></i>
                 </button>
               </div>
 
               <!-- Delete Confirmation Modal -->
-              <div class="modal fade" id="deleteModal<?= $t['id']; ?>" tabindex="-1" aria-labelledby="deleteModalLabel<?= $t['id']; ?>" aria-hidden="true">
+              <div class="modal fade" id="deleteTranksasi<?= $t['id']; ?>" tabindex="-1" aria-labelledby="deleteTranksasiLabel<?= $t['id']; ?>" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                   <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
                     <div class="modal-header border-0 pb-0">
-                      <h5 class="modal-title font-weight-bold" id="deleteModalLabel<?= $t['id']; ?>">Konfirmasi Hapus</h5>
+                      <h5 class="modal-title font-weight-bold" id="deleteTranksasiLabel<?= $t['id']; ?>">Konfirmasi Hapus</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center py-4">

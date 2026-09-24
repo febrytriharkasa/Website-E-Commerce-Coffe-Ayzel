@@ -75,6 +75,13 @@
             </a>
             </li>
 
+            <li class="sidebar-menu-item <?= url_is('transaksi-approvel*') ? 'active' : '' ?>">
+            <a href="<?= base_url('transaksi-approvel') ?>" class="sidebar-menu-link" id="menu-uibuttons" title="Manajemen Transaksi">
+                <i class="bi bi-menu-button-wide-fill"></i>
+                <span>Approvel Transaksi</span>
+            </a>
+            </li>
+
         </ul>
         </div>
     </div>

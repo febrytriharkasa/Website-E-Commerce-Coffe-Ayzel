@@ -3,6 +3,14 @@
 
 <?= $this->section('content'); ?>
 
+<!-- Alert Error -->
+<?php if (session()->getFlashdata('error')) : ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?= session()->getFlashdata('error'); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
 <?php
     // Logika PHP untuk memecah nilai old() jika form gagal validasi
     // Contoh: "250 ml" dipecah menjadi angka "250" dan satuan "ml"
@@ -87,7 +95,7 @@
                   <?= validation_show_error('ukuran'); ?>
               </div>
           <?php endif; ?>
-      </div>
+        </div>
 
         <!-- Harga modal -->
         <div class="mb-3">
@@ -190,13 +198,18 @@
         const satuan = document.getElementById('ukuran_satuan').value;
         const finalInput = document.getElementById('ukuran_final');
         
-        // Jika angka diisi, gabungkan dengan satuan (Contoh hasil: "250 ml")
         if (angka !== "") {
             finalInput.value = angka + ' ' + satuan;
         } else {
-            finalInput.value = ''; // Kosongkan jika angka dihapus
+            finalInput.value = ''; 
         }
     }
+
+    // TAMBAHKAN BARIS INI: 
+    // Memicu fungsi di atas secara otomatis saat halaman selesai di-load
+    document.addEventListener('DOMContentLoaded', function() {
+        gabungkanUkuran();
+    });
 </script>
 
 <?= $this->endSection(); ?>
