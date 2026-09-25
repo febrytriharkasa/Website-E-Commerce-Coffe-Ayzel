@@ -45,6 +45,7 @@ class Autoload extends AutoloadConfig
         'Modules\Products' => ROOTPATH . 'Modules/Products',
         'Modules\Dashboard' => ROOTPATH . 'Modules/Dashboard',
         'Modules\Transactions' => ROOTPATH . 'Modules/Transactions',
+        'Modules\Auth' => ROOTPATH . 'Modules/Auth',
     ];
 
     /**

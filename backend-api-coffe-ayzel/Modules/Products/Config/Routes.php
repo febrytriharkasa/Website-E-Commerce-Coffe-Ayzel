@@ -4,8 +4,12 @@ use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
 
+if (!isset($routes)) {
+    $routes = \Config\Services::routes(true);
+}
+
 // Data Produk
-$routes->group('product', ['namespace' => 'Modules\Products\Controllers'], static function ($routes) {
+$routes->group('product', ['namespace' => 'Modules\Products\Controllers', 'filter' => 'authFilter'], static function ($routes) {
     $routes->get('/', 'Product::index');
     $routes->get('create', 'Product::create');
     $routes->post('store', 'Product::store');
@@ -15,7 +19,7 @@ $routes->group('product', ['namespace' => 'Modules\Products\Controllers'], stati
 });
 
 // Manajemen varian dan stok produk
-$routes->group('sizes-product', ['namespace' => 'Modules\Products\Controllers'], static function ($routes) {
+$routes->group('sizes-product', ['namespace' => 'Modules\Products\Controllers', 'filter' => 'authFilter'], static function ($routes) {
     $routes->get('/', 'SizeProduct::index');
     $routes->get('create', 'SizeProduct::create');
     $routes->post('store/', 'SizeProduct::store');

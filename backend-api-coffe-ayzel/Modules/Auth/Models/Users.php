@@ -1,18 +1,18 @@
 <?php
 
-namespace Modules\Transactions\Models;
+namespace Modules\Auth\Models;
 
 use CodeIgniter\Model;
 
-class TransaksiModel extends Model
+class Users extends Model
 {
-    protected $table            = 'tb_transaksi';
+    protected $table            = 'tb_users';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = true;
+    protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['kode_transaksi', 'tgl_transaksi', 'total_pembayaran', 'status_transaksi'];
+    protected $allowedFields    = ['nama', 'email', 'password', 'role'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -25,7 +25,7 @@ class TransaksiModel extends Model
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
-     protected $deletedField  = 'deleted_at';
+    protected $deletedField  = 'deleted_at';
 
     // Validation
     protected $validationRules      = [];
@@ -43,5 +43,4 @@ class TransaksiModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
 }

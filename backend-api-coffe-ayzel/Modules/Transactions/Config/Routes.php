@@ -5,7 +5,7 @@ use CodeIgniter\Router\RouteCollection;
 /** @var RouteCollection $routes */
 
 // Data Transaksi
-$routes->group('transaksi', ['namespace' => 'Modules\Transactions\Controllers'], static function ($routes) {
+$routes->group('transaksi', ['namespace' => 'Modules\Transactions\Controllers', 'filter' => 'authFilter'], static function ($routes) {
     $routes->get('/', 'TransaksiController::index');
     $routes->get('create', 'TransaksiController::create');
     $routes->post('store', 'TransaksiController::store');
@@ -16,7 +16,7 @@ $routes->group('transaksi', ['namespace' => 'Modules\Transactions\Controllers'],
 });
 
 // Approvel Transaksi
-$routes->group('transaksi-approvel', ['namespace' => 'Modules\Transactions\Controllers'], static function ($routes) {
+$routes->group('transaksi-approvel', ['namespace' => 'Modules\Transactions\Controllers', 'filter' => 'authFilter'], static function ($routes) {
     $routes->get('/', 'ApprovelTransaksiController::index');
     $routes->post('approvel-accept/(:num)', 'ApprovelTransaksiController::approvelTransaksiAccept/$1');
     $routes->post('approvel-reject/(:num)', 'ApprovelTransaksiController::approvelTransaksiReject/$1');

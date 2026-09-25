@@ -34,6 +34,7 @@ class Filters extends BaseFilters
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
         'cors'          => \App\Filters\CorsFilter::class,
+        'authFilter'    => \App\Filters\AuthFilter::class,
     ];
 
     /**
@@ -78,6 +79,7 @@ class Filters extends BaseFilters
             'cors',
         ],
         'after' => [
+            'toolbar',
             // 'honeypot',
             // 'secureheaders',
         ],

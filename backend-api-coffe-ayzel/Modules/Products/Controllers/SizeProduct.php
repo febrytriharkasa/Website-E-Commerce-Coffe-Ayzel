@@ -26,7 +26,7 @@ class SizeProduct extends BaseController
         $product = $this->productModel->select('id, nama')->paginate($limit, 'size_product');
 
         foreach ($product as &$p) {
-            $sizes = $this->sizeModel->where('produk_id', $p['id'])->findAll();
+            $sizes = $this->sizeModel->where('produk_id', $p['id'])->orderBy('stok', 'ASC')->findAll();
             
             // Looping setiap varian yang ada di dalam produk tersebut
             foreach ($sizes as &$v) {

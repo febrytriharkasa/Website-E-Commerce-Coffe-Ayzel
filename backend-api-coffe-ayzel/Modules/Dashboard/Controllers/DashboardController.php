@@ -37,7 +37,7 @@ class DashboardController extends BaseController
                 $dateFilter = "DATE($dateColumn) = CURDATE()";
                 break;
             case 'minggu':
-                $dateFilter = "YEAR_WEEK($dateColumn, 1) = YEAR_WEEK(CURDATE(), 1)";
+                $dateFilter = "YEARWEEK($dateColumn, 1) = YEARWEEK(CURDATE(), 1)";
                 break;
             case 'bulan':
                 $dateFilter = "MONTH($dateColumn) = MONTH(CURDATE()) AND YEAR($dateColumn) = YEAR(CURDATE())";
@@ -59,11 +59,13 @@ class DashboardController extends BaseController
         
         // Filter HANYA transaksi yang selesai
         $builder->where('tb_transaksi.status_transaksi', 'selesai');
-
+    
         if ($dateFilter) {
             $builder->where($dateFilter);
         }
 
+        $builder->where('tb_detail_transaksi.deleted_at', null);
+        
         $profitData = $builder->get()->getRow();
         $totalKeuntungan = ($profitData->total_jual ?? 0) - ($profitData->total_modal ?? 0);
 
@@ -89,7 +91,7 @@ class DashboardController extends BaseController
                 ->groupBy('tb_transaksi.tgl_transaksi')
                 ->orderBy('tgl', 'ASC');
         } elseif ($period === 'minggu') {
-            $chartBuilder->select('YEAR_WEEK(tb_transaksi.tgl_transaksi, 1) as minggu, SUM(tb_detail_transaksi.subtotal) as total', false)
+            $chartBuilder->select('YEARWEEK(tb_transaksi.tgl_transaksi, 1) as minggu, SUM(tb_detail_transaksi.subtotal) as total', false)
                 ->where('tb_transaksi.tgl_transaksi >= DATE_SUB(NOW(), INTERVAL 4 WEEK)')
                 ->groupBy('minggu')
                 ->orderBy('minggu', 'ASC');
@@ -115,9 +117,13 @@ class DashboardController extends BaseController
 
         // 6. Stok produk yang habis/terendam (Abaikan Soft Delete)
         $lowStockQuery = $db->table('tb_size_product');
-        $lowStockQuery->where('stok <', 5);
-        $lowStockQuery->where('deleted_at', null); // Abaikan data yang sudah di soft delete
-        $lowStockCount = $lowStockQuery->countAllResults();
+        $lowStockQuery->select('tb_size_product.ukuran, tb_product.nama, tb_size_product.stok');
+        $lowStockQuery->join('tb_product', 'tb_product.id = tb_size_product.produk_id');
+        $lowStockQuery->where('tb_size_product.stok <', 5);
+        $lowStockQuery->where('tb_size_product.deleted_at', null); // Abaikan data yang sudah di soft delete
+       
+        $lowStockItems = $lowStockQuery->get()->getResultArray(); 
+        $lowStockCount = count($lowStockItems);
 
         // 7. Detail stok keluar per periode
         $stockKeluarBuilder = $db->table('tb_detail_transaksi');
@@ -148,6 +154,7 @@ class DashboardController extends BaseController
             'chart_labels'     => json_encode(array_keys($chartData)),
             'period'           => $period,
             'stock_keluar'     => $stockKeluarRows,
+            'low_stock_items'  => $lowStockItems,
         ];
 
         return view('Modules\Dashboard\Views\dashboard', $data);

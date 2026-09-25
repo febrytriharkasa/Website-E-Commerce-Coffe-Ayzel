@@ -1,11 +1,36 @@
 <?= $this->extend('layout/template'); ?>
 <?= $this->section('content'); ?>
 
+<!-- ======================================================= -->
+<!-- NOTIFIKASI STOK MENIPIS (< 5) -->
+<!-- ======================================================= -->
+<?php if (isset($low_stock_count) && $low_stock_count > 0 && isset($low_stock_items)) : ?>
+    <div class="alert alert-warning alert-dismissible fade show shadow-sm mb-4" role="alert" style="border-left: 5px solid #ffc107; border-radius: 10px;">
+        <div class="d-flex align-items-start">
+            <i class="bi bi-exclamation-triangle-fill text-warning me-3 mt-1" style="font-size: 2rem;"></i>
+            <div>
+                <h6 class="alert-heading fw-bold mb-1 text-dark">Peringatan Stok Menipis!</h6>
+                <p class="mb-2 text-dark">Terdapat <strong><?= $low_stock_count; ?> varian produk</strong> yang stoknya kurang dari 5:</p>
+                <ul class="mb-0 text-dark" style="padding-left: 1.2rem;">
+                    <?php foreach($low_stock_items as $item): ?>
+                        <li>
+                            <?= $item['nama']; ?> (<?= $item['ukuran']; ?>) - Sisa Stok: 
+                            <strong class="text-danger"><?= $item['stok']; ?> Unit</strong>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+<!-- ======================================================= -->
+
 <!-- Page Header -->
 <div class="page-header d-flex justify-content-between align-items-center mb-4">
   <div>
     <h1 class="page-title fw-bold text-dark">Dashboard Analitik</h1>
-    <p class="page-subtitle text-muted mb-0">Selamat datang kembali, Administrator</p>
+    <p class="page-subtitle text-muted mb-0">Selamat datang kembali, <?= esc(session()->get('nama')); ?></p>
   </div>
   <div class="dropdown">
     <button class="btn btn-light border dropdown-toggle shadow-sm px-3 py-2 rounded-pill" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -177,9 +202,9 @@
   // Chart Sales
   document.addEventListener('DOMContentLoaded', () => {
     const options = {
-      series: [{ name: 'Penjualan', data: <?= $chart_data; ?> }],
+      series: [{ name: 'Penjualan', data: <?= $chart_data ?? '[]'; ?> }],
       chart: { type: 'area', height: 330, toolbar: { show: false } },
-      xaxis: { categories: <?= $chart_labels; ?> },
+      xaxis: { categories: <?= $chart_labels ?? '[]'; ?> },
       stroke: { curve: 'smooth', width: 3 },
       colors: ['#0f5132'],
       fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05 } }
@@ -189,10 +214,3 @@
 </script>
 
 <?= $this->endSection(); ?>
-        showRow = true;
-      }
-
-      row.style.display = showRow ? '' : 'none';
-    });
-  }
-</script>

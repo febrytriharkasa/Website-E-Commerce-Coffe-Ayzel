@@ -81,8 +81,8 @@ class TransaksiController extends BaseController
             $size_id = $size_product_ids[$i];
             $qty = $qtys[$i];
 
-            // Ambil data harga dari tb_size_produk
-            $sizeData = $this->sizeModel->find($size_id);
+            // Ambil data harga dari tb_size_produk dan race condition
+            $sizeData = $this->db->query("select * from tb_size_product where id ? = for update", [$size_id])->getRowArray();
             $stok = $sizeData['stok'];
 
             // Hitung Harga
@@ -198,8 +198,8 @@ class TransaksiController extends BaseController
             $size_id = $size_product_ids[$i];
             $qty = $qtys[$i];
 
-            // Ambil data dari master HANYA untuk mengecek sisa stok terbaru
-            $sizeData = $this->sizeModel->find($size_id);
+            // Ambil data dari master HANYA untuk mengecek sisa stok terbaru dan race condition
+            $sizeData = $this->db->query("select * from tb_size_product where id ? = for update", [$size_id])->getRowArray();
             $stok = $sizeData['stok'];
             
             if ($status_transaksi != 'batal'){

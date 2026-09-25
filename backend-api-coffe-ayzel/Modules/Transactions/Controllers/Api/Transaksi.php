@@ -52,14 +52,15 @@ class Transaksi extends ResourceController
         // Simpan item belanjaan ke detail transaksi dan kurangi stok
         foreach ($json['items'] as $item)
         {
-            // PERBAIKAN 1: Hapus $this->
-            $sizeData = $sizeModel->find($item['size_product_id']);
+            // Race Conditions untuk membuat request antri terlebih dahulu
+            $sizeData = $db->query("select * from tb_size_product where id ? = for update", [$item['size_product_id']])->getRowArray();
 
             if (!$sizeData) {
                 $db->transRollback();
                 return $this->failNotFound('Produk dengan ID ' . $item['size_product_id'] . ' tidak ditemukan.');
             }
             
+            // Dilakukan pengecekan setelah antrian apakah stok masih ada
             if ($sizeData['stok'] < $item['qty']) {
                 $db->transRollback();
                 // Gunakan $this->fail() untuk API
