@@ -82,7 +82,7 @@ class TransaksiController extends BaseController
             $qty = $qtys[$i];
 
             // Ambil data harga dari tb_size_produk dan race condition
-            $sizeData = $this->db->query("select * from tb_size_product where id ? = for update", [$size_id])->getRowArray();
+            $sizeData = $this->db->query("SELECT * FROM tb_size_product WHERE id = ? FOR UPDATE", [$size_id])->getRowArray();
             $stok = $sizeData['stok'];
 
             // Hitung Harga

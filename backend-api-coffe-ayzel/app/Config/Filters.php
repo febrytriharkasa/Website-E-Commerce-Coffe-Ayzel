@@ -35,6 +35,7 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         'cors'          => \App\Filters\CorsFilter::class,
         'authFilter'    => \App\Filters\AuthFilter::class,
+        'throttle' => \App\Filters\ThrottleFilter::class,
     ];
 
     /**
@@ -109,5 +110,8 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [];
+    public array $filters = [ 
+        'throttle' => ['before' => ['api/*']],
+        'cors' => ['before' => ['api/*']],
+    ];
 }

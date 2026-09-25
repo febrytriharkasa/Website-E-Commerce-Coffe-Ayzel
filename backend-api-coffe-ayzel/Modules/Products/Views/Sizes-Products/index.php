@@ -108,13 +108,13 @@
                     <!-- Edit -->
                     <a href="/sizes-product/edit/<?= $v['id']; ?>" class="btn-custom btn-custom-warning btn-custom-sm" title="Edit row"><i class="bi bi-pencil"></i></a>
                     <!-- Delete -->
-                    <button type="button" class="btn-custom btn-custom-danger btn-custom-sm" title="Hapus" data-bs-toggle="modal" data-bs-target="#deleteUkuran<?= $p['id']; ?>">
+                    <button type="button" class="btn-custom btn-custom-danger btn-custom-sm" title="Hapus" data-bs-toggle="modal" data-bs-target="#deleteUkuran<?= $v['id']; ?>">
                         <i class="bi bi-trash"></i>
                     </button>
                   </div>
 
                   <!-- Delete Confirmation Pop Up -->
-                  <div class="modal fade" id="deleteUkuran<?= $v['id']; ?>" tabindex="-1" aria-labelledby="deleteUkuranLabel<?= $p['id']; ?>" aria-hidden="true">
+                  <div class="modal fade" id="deleteUkuran<?= $v['id']; ?>" tabindex="-1" aria-labelledby="deleteUkuranLabel<?= $v['id']; ?>" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                       <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
                         <div class="modal-header border-0 pb-0">
@@ -126,12 +126,12 @@
                             <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
                           </div>
                           <p class="mb-1 text-muted">Apakah Anda yakin ingin menghapus produk ini?</p>
-                          <h6 class="fw-bold text-dark"><?= $p['nama']; ?></h6>
+                          <h6 class="fw-bold text-dark"><?= $p['nama']; ?> - <?= $v['ukuran']; ?></h6>
                           <small class="text-danger">Tindakan ini tidak dapat dibatalkan.</small>
                         </div>
                         <div class="modal-footer border-0 pt-0 justify-content-center gap-2">
                           <button type="button" class="btn-custom btn-custom-light px-4" data-bs-dismiss="modal">Batal</button>
-                          <form action="/sizes-product/delete/<?= $p['id']; ?>" method="POST" class="d-inline">
+                          <form action="/sizes-product/delete/<?= $v['id']; ?>" method="POST" class="d-inline">
                             <?= csrf_field(); ?>
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="btn-custom btn-custom-danger px-4">Hapus Produk</button>

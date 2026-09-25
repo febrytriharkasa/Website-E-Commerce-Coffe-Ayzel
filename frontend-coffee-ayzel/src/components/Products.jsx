@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Element } from 'react-scroll';
 import { ShoppingCart, Search, Loader2 } from 'lucide-react';
@@ -93,23 +93,23 @@ export default function Products() {
    }, 0);
 
    // Produk yang ditampilkan setelah filter stok dan pencarian nama
-   const filteredProducts = products
-     .filter((product) => product.stok > 0)
-     .filter((product) =>
-       product.name.toLowerCase().includes(search.trim().toLowerCase())
-     );
+  const filteredProducts = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return products
+      .filter((p) => p.stok > 0)
+      .filter((p) => !query || p.name.toLowerCase().includes(query));
+  }, [products, search]);
 
 
   // Menyiapkan item keranjang dengan harga sesuai varian ukuran
-  const cartItems = Object.entries(cart)
-    .map(([key, qty]) => {
+  const cartItems = useMemo(() => {
+    return Object.entries(cart).map(([key, qty]) => {
       const [idStr, size] = key.split('|');
       const p = products.find((pr) => String(pr.id) === String(idStr));
       if (!p) return null;
-      const unitPrice = p.prices[size] || 0;
-      return { ...p, qty, displaySize: size, price: unitPrice };
-    })
-    .filter(Boolean);
+      return { ...p, qty, displaySize: size, price: p.prices[size] || 0 };
+    }).filter(Boolean);
+  }, [cart, products]);
 
   const handleSendWA = async () => {
     if (cartItems.length === 0) return;
@@ -250,7 +250,7 @@ export default function Products() {
                                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                               }`}
                             >
-                              {sizeOption} L
+                              {sizeOption}
                             </button>
                           ))}
                         </div>
@@ -291,7 +291,7 @@ export default function Products() {
                               <button
                                 onClick={() => removeFromCart(product.id, currentSize, maxStock)}
                                 disabled={qty >= maxStock} // Disable tombol + jika qty sudah sama dengan stok
-                                className={`w-7 h-7 rounded-full text-white font-bold transition-colors flex items-center justify-center text-xs ${qty >= maxStock ? 'bg-gray-400 cursor-not-allowed' : 'bg-amber-600 hover:bg-amber-700'}`}
+                                className={`w-7 h-7 rounded-full text-white font-bold transition-colors flex items-center justify-center text-xs ${qty >= maxStock ? 'bg-gray-400 cursor-not-allowed' : 'bg-amber-100 hover:bg-amber-700'}`}
                               >
                                 -
                               </button>

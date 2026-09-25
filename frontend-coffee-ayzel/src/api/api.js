@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Definisi URL dasar (base URL) dari server backend lokal Anda
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 // Export fungsi asynchronous agar bisa dipanggil di komponen React/Vue lain
 export const getProductsFromAPI = async () => {
@@ -54,8 +54,8 @@ export const getProductsFromAPI = async () => {
       };
     });
   } catch (error) {
-    console.error("Error fetching data:", error);
-    return []; 
+    console.error("API error:", error);
+    throw new Error('Gagal mengambil data produk server.');
   }
 };
 
@@ -81,6 +81,7 @@ export const createTransaction = async (payload) => {
         return result;
     } catch (error) {
         // Tangkap error jaringan (seperti server mati / CORS)
-        throw error;
+        console.error("API error:", error);
+        throw new Error('Gagal mengambil data produk server.');
     }
 };

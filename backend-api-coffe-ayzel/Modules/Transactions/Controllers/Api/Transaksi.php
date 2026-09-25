@@ -11,16 +11,6 @@ use Modules\Products\Models\SizeProductModel;
 class Transaksi extends ResourceController
 {
 
-    public function __construct()
-    {
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Headers: Content-Type, Accept');
-        header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE');
-        // Tangani preflight request dari browser (OPTIONS)
-        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-            exit(0);
-        }
-    }
     /**
      * Return a new resource object, with default properties.
      *
@@ -53,7 +43,7 @@ class Transaksi extends ResourceController
         foreach ($json['items'] as $item)
         {
             // Race Conditions untuk membuat request antri terlebih dahulu
-            $sizeData = $db->query("select * from tb_size_product where id ? = for update", [$item['size_product_id']])->getRowArray();
+            $sizeData = $db->query("SELECT * FROM tb_size_product WHERE id = ? FOR UPDATE", [$item['size_product_id']])->getRowArray();
 
             if (!$sizeData) {
                 $db->transRollback();
@@ -68,7 +58,7 @@ class Transaksi extends ResourceController
             }
 
             $subtotal = $item['qty'] * $item['harga_satuan'];
-            $subtotal_modal = $item['harga_satuan'] * $item['qty'];
+            $subtotal_modal = $item['harga_modal'] * $item['qty'];
             
             // Perbaikan sebelumnya sudah benar
             $harga_satuan = $sizeModel->getDiskon($sizeData); 

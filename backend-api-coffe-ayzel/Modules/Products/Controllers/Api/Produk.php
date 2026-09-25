@@ -14,45 +14,32 @@ class Produk extends ResourceController
      *
      * @return ResponseInterface
      */
-    public function index() {
+    public function index()
+    {
         $productModel = new ProductModel();
         $sizeModel = new SizeProductModel();
 
         $products = $productModel->findAll();
-        $result = [];
-
-        // Gabungkan produk dengan daftar ukuran masing masing
-        foreach ($products as $produk)
-        {
-            $sizes = $sizeModel->where('produk_id' , $produk['id'])->findAll();
-
-            // Cek apakah produk sudah memiliki varian
-            // Ambil ID baik jika ia Array maupun Object
-            $produkId = is_array($produk) ? $produk['id'] : $produk->id;
-
-            // Cari varian berdasarkan ID produk
-            $sizes = $sizeModel->where('produk_id', $produkId)->findAll();
-
-            // Jika kosong ATAU jumlahnya 0, lewati produk ini
-            if (empty($sizes) || count($sizes) === 0) {
-                continue; 
-            }
-
-            // Looping setiap varian yang ada di dalam produk tersebut
-            foreach ($sizes as &$v) {
-                // DI SINI FUNGSI DIJALANKAN!
-                // Hasil perhitungan diskon disimpan ke dalam index baru bernama 'harga_akhir'
-                $v['harga_akhir'] = $sizeModel->getDiskon($v);
-            }
-            
-            $produk['sizes'] = $sizes;
-            $result[] = $produk; 
+        if (empty($products)) {
+            return $this->respond(['status' => true, 'data' => []]);
         }
 
-        return $this->respond([
-            'status' => true,
-            'message' => 'Berhasil mengambil data produk dan ukuran.',
-            'data' => $result
-        ]);
+        $allSizes = $sizeModel->findAll();
+        $sizesGrouped = [];
+        foreach ($allSizes as $size) {
+            $size['harga_akhir'] = $sizeModel->getDiskon($size);
+            $sizesGrouped[$size['produk_id']][] = $size;
+        }
+
+        $result = [];
+        foreach ($products as $product) {
+            $pId = $product['id'];
+            if (empty($sizesGrouped[$pId])) continue;
+
+            $product['sizes'] = $sizesGrouped[$pId];
+            $result[] = $product;
+        }
+
+        return $this->respond(['status' => true, 'data' => $result]);
     }
 }
