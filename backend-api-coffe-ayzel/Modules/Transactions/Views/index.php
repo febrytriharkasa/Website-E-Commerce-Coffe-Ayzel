@@ -22,9 +22,9 @@
   <!-- Header Controls -->
   <div class="table-header-control">
     <!-- Search bar -->
-    <div class="table-search-box">
-      <i class="bi bi-search table-search-icon"></i>
-      <input type="text" class="table-search-input" placeholder="Cari kode transaksi...">
+    <div class="relative">
+      <i class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" data-lucide="search"></i>
+      <input class="text-xs pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-brand-500 focus:border-brand-500 w-44 md:w-56 transition" placeholder="Cari Transaksi..." type="text" id="searchStock"/>
     </div>
     
     <!-- Action buttons / Filter options -->

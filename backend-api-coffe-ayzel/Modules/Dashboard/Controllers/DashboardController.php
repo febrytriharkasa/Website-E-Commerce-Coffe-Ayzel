@@ -143,7 +143,7 @@ class DashboardController extends BaseController
         $stockKeluarRows = $stockKeluarBuilder->get()->getResultArray();
 
         // 8. Ambil data terbaru stok per ukuran
-        $freshProducts = $this->sizeProductModel->getSizesWithNameProduct();
+        $freshProducts = $this->sizeProductModel->getSizesWithNameProductDash();
 
         $data = [
             'title'            => 'Dashboard | Sistem Penjualan',

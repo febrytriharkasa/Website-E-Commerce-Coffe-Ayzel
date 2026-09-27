@@ -53,6 +53,14 @@ class SizeProductModel extends Model
         ->findAll();
     }
 
+    public function getSizesWithNameProductDash()
+    {
+        return $this->select('tb_size_product.*, tb_product.nama')
+        ->join('tb_product', 'tb_product.id = tb_size_product.produk_id', 'left')
+        ->orderBy('tb_size_product.stok', 'ASC')
+        ->findAll(5);
+    }
+
     // Fungsi untuk mengatur diskon
     public function getDiskon($sizes)
     {

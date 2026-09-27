@@ -14,11 +14,40 @@
   <link rel="stylesheet" href="<?= base_url('assets/libs/bootstrap-icons/bootstrap-icons.css'); ?>">
   <link rel="stylesheet" href="<?= base_url('assets/libs/apexcharts/apexcharts.css'); ?>">
   <link rel="stylesheet" href="<?= base_url('assets/libs/flatpickr/flatpickr.min.css'); ?>">
+  <!-- Tailwind CSS v3 with Plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#fcf8f2',
+              100: '#f8eedd',
+              500: '#b47b38',
+              600: '#9b6329',
+              900: '#46270b',
+            }
+          }
+        }
+      }
+    }
+</script>
 
   <!-- Main Design System & Custom Stylesheet -->
   <link rel="stylesheet" href="<?= base_url('assets/css/main.css'); ?>">
 
-  <style>
+  <style data-purpose="custom-typography-and-effects">
   @media print {
       /* 1. Sembunyikan elemen UI website, tombol-tombol, dan Floating Icon di pojok layar */
       .navbar-custom, .sidebar-custom, .page-header, 
@@ -177,6 +206,31 @@
           text-align: right !important; 
       }
   }
+  body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .glow-pulse {
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      animation: pulse-ring 2s infinite cubic-bezier(0.66, 0, 0, 1);
+    }
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
   </style>
 </head>
 
@@ -289,11 +343,12 @@
       </div>
 
       <!-- Mid navbar: search pill -->
-      <div class="navbar-search-wrapper">
-        <input type="text" class="navbar-search-input" placeholder="Search anything in Spark..." id="main-search">
-        <button class="navbar-search-btn" aria-label="Search">
-          <i class="bi bi-search"></i>
-        </button>
+      <div class="relative">
+        <!-- Posisi ikon disesuaikan sedikit ke tengah -->
+        <i class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" data-lucide="search"></i>
+        
+        <!-- Perubahan pada width, rounded, dan padding/text -->
+        <input class="text-sm pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-full focus:bg-white focus:ring-1 focus:ring-brand-500 focus:border-brand-500 w-full md:w-80 lg:w-96 transition" placeholder="Cari varian kopi..." type="text" id="searchStock"/>
       </div>
 
       <!-- Right actions -->
@@ -412,6 +467,7 @@
   <script src="<?= base_url('assets/js/dashboard.js'); ?>"></script>
 
   <script>
+    lucide.createIcons();
     function previewImg() {
         const gambar = document.querySelector('#gambar');
         const imgPreview = document.querySelector('.img-preview');
