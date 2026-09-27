@@ -72,7 +72,8 @@ class DashboardController extends BaseController
         // 5. Total penjualan per periode untuk chart (Hanya transaksi selesai)
         $chartBuilder = $db->table('tb_detail_transaksi');
         $chartBuilder->join('tb_transaksi', 'tb_transaksi.id = tb_detail_transaksi.transaksi_id');
-        $chartBuilder->where('tb_transaksi.status_transaksi', 'selesai');
+        $chartBuilder->where('tb_transaksi.status_transaksi', 'selesai')
+                    ->where('tb_transaksi.deleted_at', null);
         
         if ($dateFilter) {
             $chartBuilder->where($dateFilter);
@@ -147,6 +148,7 @@ class DashboardController extends BaseController
         $data = [
             'title'            => 'Dashboard | Sistem Penjualan',
             'products'         => $freshProducts,
+            'transaksi'        => $this->transaksiModel->where('status_transaksi', 'pending')->findAll(),
             'total_transaksi'  => $totalTransaksi,
             'total_keuntungan' => $totalKeuntungan,
             'low_stock_count'  => $lowStockCount,

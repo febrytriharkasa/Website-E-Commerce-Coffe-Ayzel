@@ -12,6 +12,7 @@ $routes->group('transaksi', ['namespace' => 'Modules\Transactions\Controllers', 
     $routes->get('edit/(:num)', 'TransaksiController::edit/$1');
     $routes->post('update/(:num)', 'TransaksiController::update/$1');
     $routes->delete('delete/(:num)', 'TransaksiController::delete/$1');
+    $routes->get('show/(:num)', 'TransaksiController::show/$1');
     // Sesuaikan nama controller-nya
 });
 

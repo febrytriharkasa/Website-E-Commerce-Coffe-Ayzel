@@ -199,7 +199,7 @@ class TransaksiController extends BaseController
             $qty = $qtys[$i];
 
             // Ambil data dari master HANYA untuk mengecek sisa stok terbaru dan race condition
-            $sizeData = $this->db->query("select * from tb_size_product where id ? = for update", [$size_id])->getRowArray();
+            $sizeData = $this->db->query("SELECT * FROM tb_size_product WHERE id = ? FOR UPDATE", [$size_id])->getRowArray();
             $stok = $sizeData['stok'];
             
             if ($status_transaksi != 'batal'){
@@ -288,6 +288,18 @@ class TransaksiController extends BaseController
         }
 
         return redirect()->to('/transaksi')->with('success', 'Data berhasil dihapus!');
+    }
+
+    // TAMPILAN DETAIL INVOICE (Opsional - Untuk melihat data)
+    public function show($id)
+    {
+         $data = [
+            'Title' => 'Detail Transaksi',
+            'detail' => $this->detailModel->getSizesProductsWithDetails($id),
+            'transaksi' => $this->transaksiModel->find($id)
+        ];
+
+        return view('Modules\Transactions\Views\show', $data);
     }
 
 }

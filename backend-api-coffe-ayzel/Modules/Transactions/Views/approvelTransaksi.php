@@ -51,7 +51,7 @@
             <th width="20%">Kode Transaksi</th> 
             <th>Total Pembayaran</th>
             <th>Status</th>
-            <th width="20%" class="text-center">Aksi (Approval)</th>
+            <th width="20%" class="text-center">Detail</th>
         </tr>
       </thead>
       <tbody>
@@ -78,79 +78,13 @@
                 
                 <td><span class="badge-table pending">Pending</span></td>
                 
-                <td>
-                  <div class="d-flex justify-content-center gap-2"> 
-                        <!-- Tombol Pemicu Modal Accept -->
-                        <button type="button" class="btn-custom btn-custom-primary btn-custom-sm" title="Setujui Transaksi" 
-                            data-bs-toggle="modal" data-bs-target="#acceptModal<?= $t['id']; ?>"
-                            style="border-radius: 8px; padding: 0.25rem 0.5rem;">
-                            <i class="bi bi-check-lg"></i>
-                        </button>
-
-                        <!-- Tombol Pemicu Modal Reject -->
-                        <button type="button" class="btn-custom btn-custom-warning btn-custom-sm text-white" title="Tolak Transaksi" 
-                            data-bs-toggle="modal" data-bs-target="#rejectModal<?= $t['id']; ?>"
-                            style="border-radius: 8px; padding: 0.25rem 0.5rem; background-color: #dc3545; border: none;">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
+                <td class="text-center">
+                  <div class="d-flex justify-content-center gap-1">
+                    <!-- Tombol Detail -->
+                    <a href="/transaksi/show/<?= $t['id']; ?>" class="btn-custom btn-custom-secondary btn-custom-sm" title="Detail Transaksi">
+                        <i class="bi bi-receipt-cutoff"></i>
+                    </a>
                   </div>
-
-                  <!-- ================= MODAL SETUJUI (ACCEPT) ================= -->
-                  <div class="modal fade" id="acceptModal<?= $t['id']; ?>" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                      <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-                        <div class="modal-header border-0 pb-0">
-                          <h5 class="modal-title fw-bold">Konfirmasi Persetujuan</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body text-center py-4">
-                          <div class="mb-3">
-                            <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
-                          </div>
-                          <p class="mb-1 text-muted">Apakah Anda yakin ingin menyetujui transaksi ini?</p>
-                          <h5 class="fw-bold text-dark mt-2"><?= $t['kode_transaksi']; ?></h5>
-                          <p class="mb-0 text-muted small">Total: Rp <?= number_format($t['total_pembayaran'], 0, ',', '.'); ?></p>
-                        </div>
-                        <div class="modal-footer border-0 pt-0 justify-content-center gap-2">
-                          <button type="button" class="btn-custom btn-custom-light px-4" data-bs-dismiss="modal">Batal</button>
-                          <form action="/transaksi-approvel/approvel-accept/<?= $t['id']; ?>" method="POST" class="d-inline">
-                              <?= csrf_field(); ?>
-                              <button type="submit" class="btn-custom btn-custom-danger px-4">Ya, Setujui</button>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- ================= MODAL TOLAK (REJECT) ================= -->
-                  <div class="modal fade" id="rejectModal<?= $t['id']; ?>" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                      <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-                        <div class="modal-header border-0 pb-0">
-                          <h5 class="modal-title fw-bold">Konfirmasi Penolakan</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body text-center py-4">
-                          <div class="mb-3">
-                            <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
-                          </div>
-                          <p class="mb-1 text-muted">Apakah Anda yakin ingin menolak/membatalkan transaksi ini?</p>
-                          <h5 class="fw-bold text-dark mt-2"><?= $t['kode_transaksi']; ?></h5>
-                          <small class="text-danger mt-3 d-block text-wrap">
-                            Perhatian: Stok barang akan otomatis dikembalikan ke sistem!
-                          </small>
-                        </div>
-                        <div class="modal-footer border-0 pt-0 justify-content-center gap-2">
-                          <button type="button" class="btn-custom btn-custom-light px-4" data-bs-dismiss="modal">Batal</button>
-                          <form action="/transaksi-approvel/approvel-reject/<?= $t['id']; ?>" method="POST" class="d-inline">
-                              <?= csrf_field(); ?>
-                              <button type="submit" class="btn-custom btn-custom-danger px-4" style="background-color: #dc3545; border: none;">Ya, Tolak Transaksi</button>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
                 </td>
               </tr>
             <?php endforeach; ?>

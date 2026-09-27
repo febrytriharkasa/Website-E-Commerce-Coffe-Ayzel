@@ -17,6 +17,167 @@
 
   <!-- Main Design System & Custom Stylesheet -->
   <link rel="stylesheet" href="<?= base_url('assets/css/main.css'); ?>">
+
+  <style>
+  @media print {
+      /* 1. Sembunyikan elemen UI website, tombol-tombol, dan Floating Icon di pojok layar */
+      .navbar-custom, .sidebar-custom, .page-header, 
+      .d-flex.justify-content-end, footer, .footer-custom,
+      .btn, button, .position-fixed, .fixed-bottom, [class*="fixed"] {
+          display: none !important;
+      }
+
+      /* 2. Setup Kertas */
+      @page { margin: 0 !important; }
+
+      *, *::before, *::after { box-sizing: border-box !important; }
+
+      /* 3. PERBAIKAN FINAL: Paksa SELURUH div, main, dan section agar tidak memiliki batas tinggi (100vh) */
+      html, body, div, main, section, article {
+          height: auto !important;
+          min-height: 0 !important;
+          overflow: visible !important;
+      }
+
+      html, body {
+          background-color: #fff !important;
+          width: 80mm !important; 
+          margin: 0 !important;
+          padding: 4mm !important;
+          font-family: 'Courier New', Courier, monospace !important; 
+          color: #000 !important;
+          font-size: 10px !important; 
+      }
+
+      /* 4. Hapus jarak, efek shadow, dan border radius bawaan Bootstrap */
+      .card, .row, .col-md-10, .col-sm-6 {
+          border: none !important;
+          box-shadow: none !important;
+          border-radius: 0 !important;  
+          margin: 0 !important;
+          padding: 0 !important;
+          width: 100% !important;
+          max-width: 100% !important;
+      }
+
+      /* 5. HEADER STRUK (Tengah) */
+      .row.border-bottom {
+          border-bottom: 1px dashed #000 !important;
+          padding-bottom: 10px !important;
+          margin-bottom: 5px !important;
+          display: flex !important;
+          flex-direction: column !important; 
+          align-items: center !important;    
+          text-align: center !important;
+      }
+
+      .text-sm-end {
+          text-align: center !important;
+          width: 100% !important;
+      }
+
+      h4.text-primary {
+          font-size: 14px !important;
+          color: #000 !important;
+          margin: 0 0 2px 0 !important;
+      }
+
+      span.text-muted.fw-semibold {
+          font-size: 10px !important;
+          display: block !important;
+          margin-bottom: 5px !important;
+      }
+
+      .badge {
+          background: transparent !important;
+          color: #000 !important;
+          border: 1px dashed #000 !important;
+          font-size: 10px !important;
+          padding: 2px 5px !important;
+          display: inline-block !important;
+      }
+
+      /* ==================================================
+        6. FORMAT TABEL PRODUK
+        ================================================== */
+      .table-custom, .table-custom tbody, .table-custom tfoot {
+          display: block !important;
+          width: 100% !important;
+          margin: 0 !important;
+          border-collapse: collapse !important;
+      }
+      
+      .table-custom thead { display: none !important; }
+
+      .table-custom tbody tr {
+          display: flex !important;
+          flex-wrap: wrap !important; 
+          align-items: center !important;
+          border-bottom: 1px dashed #ccc !important;
+          padding: 4px 0 !important;
+          width: 100% !important;
+      }
+
+      .table-custom td {
+          border: none !important;
+          padding: 0 !important;
+          font-size: 10px !important;
+          color: #000 !important;
+      }
+
+      .table-custom tbody td:nth-child(1) { display: none !important; }
+
+      .table-custom tbody td:nth-child(2) {
+          flex: 0 0 100% !important;
+          font-weight: bold !important;
+          margin-bottom: 4px !important;
+      }
+
+      .table-custom tbody td:nth-child(3) { 
+          flex: 0 0 40% !important; 
+          text-align: left !important; 
+      }
+      
+      .table-custom tbody td:nth-child(4) { 
+          flex: 0 0 15% !important; 
+          text-align: center !important; 
+      }
+      .table-custom tbody td:nth-child(4)::before { content: "x "; }
+      
+      .table-custom tbody td:nth-child(5) { 
+          flex: 0 0 45% !important; 
+          text-align: right !important; 
+      }
+
+      /* ==================================================
+        7. FOOTER TOTAL PEMBAYARAN 
+        ================================================== */
+      .table-custom tfoot tr {
+          display: flex !important;
+          justify-content: space-between !important; 
+          align-items: center !important;
+          border-top: 1px dashed #000 !important; 
+          padding-top: 5px !important;
+          margin-top: 2px !important;
+          width: 100% !important;
+      }
+
+      .table-custom tfoot td {
+          font-size: 11px !important;
+          font-weight: bold !important;
+          border: none !important;
+          padding: 0 !important;
+      }
+
+      .table-custom tfoot td:nth-child(1) { 
+          text-align: left !important; 
+      }
+      
+      .table-custom tfoot td:nth-child(2) { 
+          text-align: right !important; 
+      }
+  }
+  </style>
 </head>
 
 <body>
@@ -99,7 +260,7 @@
 
     <div class="main-wrapper">
         <!-- START: Top Navbar Component -->
-         <header class="navbar-custom">
+      <header class="navbar-custom">
       <div class="navbar-left">
         <!-- Desktop sidebar toggle (visible on large screens only) -->
         <button class="btn-desktop-toggle d-none d-xl-flex align-items-center justify-content-center me-3"
@@ -122,6 +283,7 @@
             <li class="dropdown-header">Quick Action Shortcuts</li>
             <li><a class="dropdown-item" href="/product/create"><i class="bi bi-plus"></i> Tambah Produk</a></li>
             <li><a class="dropdown-item" href="/sizes-product/create"><i class="bi bi-plus"></i> Tambah Varian</a></li>
+            <li><a class="dropdown-item" href="/transaksi/create"><i class="bi bi-plus"></i> Tambah Transaksi</a></li>
           </ul>
         </div>
       </div>

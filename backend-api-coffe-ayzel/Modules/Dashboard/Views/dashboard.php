@@ -118,22 +118,38 @@
   </div>
 
   <div class="col-lg-4">
-    <div class="card border-0 shadow-sm rounded-4 p-4 h-100 bg-dark text-white d-flex flex-column justify-content-between">
-      <div>
-        <div class="d-flex align-items-center justify-content-between mb-3">
+    <div class="card border-0 shadow-sm rounded-4 p-4 h-100 bg-dark text-white d-flex flex-column">
+      
+      <!-- Bagian Header -->
+      <div class="mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-2">
           <h5 class="fw-bold mb-0 text-white">Ringkasan Kedai</h5>
           <i class="bi bi-cup-hot fs-3 text-warning"></i>
         </div>
-        <p class="text-white-50 small">Kelola stok dan pantau laporan transaksi harian Anda langsung dari panel kontrol ini.</p>
+        <p class="text-white-50 small mb-0">Kelola stok dan pantau laporan transaksi harian Anda langsung dari panel kontrol ini.</p>
       </div>
-      <div class="bg-white bg-opacity-10 p-3 rounded-3 mt-3">
+
+      <!-- Bagian Tengah (List Transaksi) Menggunakan Flexbox -->
+      <div class="flex-grow-1 overflow-auto mb-3" style="max-height: 250px;">
+        <?php foreach ($transaksi as $t) : ?>
+          <!-- Gunakan d-flex justify-content-between sebagai ganti <tr> dan <td> -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="badge bg-primary rounded-pill px-3 py-2"><?= $t['kode_transaksi']; ?></span>
+            <span class="badge-table pending"><?= $t['status_transaksi']; ?></span>
+          </div>
+        <?php endforeach; ?>
+      </div>
+
+      <!-- Bagian Footer (Status Sistem) -->
+      <div class="bg-white bg-opacity-10 p-3 rounded-3 mt-auto">
         <div class="d-flex justify-content-between align-items-center">
           <span class="small text-white-50">Status Sistem</span>
           <span class="badge bg-success">Aktif / Normal</span>
         </div>
       </div>
+
     </div>
-  </div>
+</div>
 </div>
 
 <!-- Table Row -->
