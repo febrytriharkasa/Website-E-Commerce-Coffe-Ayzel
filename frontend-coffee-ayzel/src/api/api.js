@@ -4,6 +4,14 @@ import axios from 'axios';
 // Definisi URL dasar (base URL) dari server backend lokal Anda
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
+const parseSizeToMl = (str) => {
+  const lower = str.toLowerCase();
+  const val = parseFloat(lower);
+  if (lower.includes('ml')) return val;
+  if (lower.includes('l')) return val * 1000;
+  return val;
+};
+
 // Export fungsi asynchronous agar bisa dipanggil di komponen React/Vue lain
 export const getProductsFromAPI = async () => {
   try {
@@ -11,7 +19,8 @@ export const getProductsFromAPI = async () => {
     const apiData = response.data.data;
 
     return apiData.map((item) => {
-      const sizesArray = item.sizes.map(s => s.ukuran);
+      const sortedSizes = [...item.sizes].sort((a, b) => parseSizeToMl(a.ukuran) - parseSizeToMl(b.ukuran));
+      const sizesArray = sortedSizes.map(s => s.ukuran);
 
       const pricesObject = {};
       const originalPricesObject = {}; 

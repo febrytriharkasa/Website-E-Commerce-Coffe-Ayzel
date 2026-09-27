@@ -62,6 +62,14 @@
       <tbody>
         <?php $no = 1 + ($pager->getPerPage('transaksi') * ($pager->getCurrentPage('transaksi') - 1)); ?>
         <?php foreach ($transaksi as $t) : ?>
+          <?php 
+          $badgeClass = match($t['status_transaksi']) {
+              'batal'   => 'failed',
+              'pending' => 'pending',
+              'selesai' => 'success',
+              default   => 'secondary' // class fallback jika status tidak dikenali
+          };
+          ?>
           <tr>
             <td><?= $no++; ?></td>
             <td><?= date('d M Y, H:i', strtotime($t['tgl_transaksi'])); ?></td>
@@ -71,13 +79,11 @@
             <td class="fw-bold text-success">
                 Rp <?= number_format($t['total_pembayaran'], 0, ',', '.'); ?>
             </td>
-            <?php if ($t['status_transaksi'] == 'batal') : ?>
-            <td><span class="badge-table failed"><?= $t['status_transaksi']; ?></span></td>
-            <?php elseif ($t['status_transaksi'] == 'pending') : ?>
-            <td><span class="badge-table pending"><?= $t['status_transaksi']; ?></span></td>
-            <?php elseif ($t['status_transaksi'] == 'selesai') : ?>
-            <td><span class="badge-table success"><?= $t['status_transaksi']; ?></span></td>
-            <?php endif; ?>
+            <td>
+              <span class="badge-table <?= $badgeClass; ?>">
+                  <?= $t['status_transaksi']; ?>
+              </span>
+          </td>
             <td>
               <div class="d-flex justify-content-center gap-1">
                 <!-- Tombol Detail -->

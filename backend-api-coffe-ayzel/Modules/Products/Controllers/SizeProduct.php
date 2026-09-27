@@ -57,64 +57,90 @@ class SizeProduct extends BaseController
         return view('Modules\Products\Views\Sizes-Products\create', $data);
     }
 
-    // $produk_id diambil otomatis dari URL parameter
     public function store()
     {   
+        // 1. Validasi untuk input array menggunakan tanda bintang (.*)
         if (!$this->validate([
-            'ukuran' => [
+            'produk_id' => [
+                'rules'  => 'required',
+                'errors' => ['required' => 'Pilih produk kopi terlebih dahulu.']
+            ],
+            'ukuran.*' => [
                 'rules'  => 'required',
                 'errors' => [
-                    'required' => 'Masukkan ukuran varian, contoh: 200gr.',
+                    'required' => 'Masukkan ukuran varian, contoh: 200 ml.',
                 ]
             ],
-            'harga_modal' => [
+            'harga_modal.*' => [
                 'rules'  => 'required|numeric|greater_than_equal_to[1000]',
                 'errors' => [
                     'required'              => 'Masukkan harga modal kopi.',
-                    'numeric'               => 'Harga harus berupa angka.',
-                    'greater_than_equal_to' => 'Harga minimal Rp. 1.000.',
+                    'numeric'               => 'Harga modal harus berupa angka.',
+                    'greater_than_equal_to' => 'Harga modal minimal Rp. 1.000.',
                 ]
             ],
-            'harga_jual' => [
+            'harga_jual.*' => [
                 'rules'  => 'required|numeric|greater_than_equal_to[1000]',
                 'errors' => [
                     'required'              => 'Masukkan harga jual kopi.',
-                    'numeric'               => 'Harga harus berupa angka.',
-                    'greater_than_equal_to' => 'Harga minimal Rp. 1.000.',
+                    'numeric'               => 'Harga jual harus berupa angka.',
+                    'greater_than_equal_to' => 'Harga jual minimal Rp. 1.000.',
                 ]
             ],
-            'stok' => 'required|numeric',
-            'tipe_diskon' => 'required|in_list[nominal,persen]',
-            'diskon' => 'numeric|permit_empty|greater_than_equal_to[0]',
+            'stok.*' => 'required|numeric',
+            'tipe_diskon.*' => 'required|in_list[nominal,persen]',
+            'diskon.*' => 'numeric|permit_empty|greater_than_equal_to[0]',
         ])) {
-            return redirect()->back()->withInput()->with('error', 'Pastikan semua field terisi dengan benar.');
+            return redirect()->back()->withInput()->with('error', 'Pastikan semua field terisi dengan benar pada setiap varian.');
         }
 
-        // Ambil data produk dan ukuran dari form
-        $produk_id = $this->request->getVar('produk_id');
-        $ukuran = $this->request->getVar('ukuran');
+        // 2. Ambil semua data input (kini menjadi array)
+        $produk_id   = $this->request->getVar('produk_id');
+        $ukuran      = $this->request->getVar('ukuran'); 
+        $harga_modal = $this->request->getVar('harga_modal');
+        $harga_jual  = $this->request->getVar('harga_jual');
+        $stok        = $this->request->getVar('stok');
+        $tipe_diskon = $this->request->getVar('tipe_diskon');
+        $diskon      = $this->request->getVar('diskon');
 
-        //cek ukuran berdasarkan produk_id -> ukuran
-        $cekUkuranSama = $this->sizeModel->where('produk_id', $produk_id)
-                                        ->where('ukuran', $ukuran)
-                                        ->first();
-
-        // Jika data ditemukan, berarti ukuran tersebut sudah ada di produk ini
-        if ($cekUkuranSama) {
-            return redirect()->back()->withInput()->with('error', 'Gagal! Ukuran "' . $ukuran . '" sudah ada di produk ini. Silakan buat ukuran lain.');
+        // 3. Cek apakah ada ukuran yang diinput ganda di form yang sama
+        if (count($ukuran) !== count(array_unique($ukuran))) {
+            return redirect()->back()->withInput()->with('error', 'Gagal! Terdapat ukuran yang duplikat dalam form Anda.');
         }
 
-        $this->sizeModel->insert([
-            'produk_id' => $this->request->getVar('produk_id'), // Langsung gunakan ID dari URL
-            'ukuran'    => $ukuran,
-            'harga_modal' => $this->request->getVar('harga_modal'),
-            'harga_jual' => $this->request->getVar('harga_jual'),
-            'stok'      => $this->request->getVar('stok'),
-            'diskon'     => $this->request->getVar('diskon'),
-            'tipe_diskon' => $this->request->getVar('tipe_diskon')
-        ]);
+        $dataVarian = [];
 
-        return redirect()->to('/sizes-product/')->with('success', 'Varian ukuran berhasil ditambahkan!');
+        // 4. Looping untuk memproses dan mengecek setiap varian
+        for ($i = 0; $i < count($ukuran); $i++) {
+            
+            // Cek ukuran berdasarkan produk_id -> ukuran di Database
+            $cekUkuranSama = $this->sizeModel->where('produk_id', $produk_id)
+                                            ->where('ukuran', $ukuran[$i])
+                                            ->first();
+
+            // Jika data ditemukan, batalkan seluruh proses dan beri pesan error spesifik
+            if ($cekUkuranSama) {
+                return redirect()->back()->withInput()->with('error', 'Gagal! Ukuran "' . $ukuran[$i] . '" sudah ada di produk ini. Silakan hapus atau ganti ukuran tersebut.');
+            }
+            
+            // Kumpulkan data yang aman untuk di-insert
+            $dataVarian[] = [
+                'produk_id'   => $produk_id,
+                'ukuran'      => $ukuran[$i],
+                'harga_modal' => $harga_modal[$i],
+                'harga_jual'  => $harga_jual[$i],
+                'stok'        => $stok[$i],
+                'diskon'      => $diskon[$i] ?? 0,
+                'tipe_diskon' => $tipe_diskon[$i]
+            ];
+        }
+
+        // 5. Insert seluruh data varian sekaligus ke database
+        if (!empty($dataVarian)) {
+            $this->sizeModel->insertBatch($dataVarian);
+        }
+
+        return redirect()->to('/sizes-product/')->with('success', 'Semua varian ukuran berhasil ditambahkan!');
     }
 
     public function edit ($id)
