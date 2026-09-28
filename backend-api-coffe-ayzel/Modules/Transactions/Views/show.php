@@ -87,29 +87,85 @@
             </div>
 
             <!-- Tombol Aksi -->
-            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-                <a href="/transaksi-approvel" class="btn-custom btn-custom-light">
-                    <i class="bi bi-arrow-left me-1"></i> Kembali
-                </a>
+            <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
                 
-                <?php if($transaksi['status_transaksi'] == 'selesai') : ?>
-                    <button type="button" onclick="window.print()" class="btn-custom btn-custom-info">
-                        <i class="bi bi-printer me-1"></i> Cetak Invoice
-                    </button>
-                    
-                <?php elseif($transaksi['status_transaksi'] == 'pending') : ?>
-                    <!-- Tombol Pemicu Modal Accept -->
-                    <button type="button" class="btn-custom btn-custom-primary" title="Setujui Transaksi" 
-                        data-bs-toggle="modal" data-bs-target="#acceptModal<?= $transaksi['id']; ?>">
-                        <i class="bi bi-check-lg me-1"></i> Selesai
+                <!-- Grup Kiri: Navigasi -->
+                <div>
+                    <a href="/transaksi-approvel" class="btn-custom btn-custom-light">
+                        <i class="bi bi-arrow-left me-1"></i> Kembali
+                    </a>
+                </div>
+                
+                <!-- Grup Kanan: Aksi Transaksi -->
+                <div class="d-flex gap-2">
+                    <!-- Manajemen Data (Edit & Hapus diletakkan paling awal di grup kanan) -->
+                    <a href="/transaksi/edit/<?= $transaksi['id']; ?>" class="btn-custom btn-custom-warning btn-custom-sm" title="Edit Transaksi">
+                        <i class="bi bi-pencil"> Edit</i>
+                    </a>
+                    <button type="button" class="btn-custom btn-custom-danger btn-custom-sm" title="Hapus" data-bs-toggle="modal" data-bs-target="#deleteTranksasi<?= $transaksi['id']; ?>">
+                        <i class="bi bi-trash"> Hapus</i>
                     </button>
 
-                    <!-- Tombol Pemicu Modal Reject -->
-                    <button type="button" class="btn-custom btn-custom-danger" title="Tolak Transaksi" 
-                        data-bs-toggle="modal" data-bs-target="#rejectModal<?= $transaksi['id']; ?>">
-                        <i class="bi bi-x-lg me-1"></i> Batal
-                    </button>
-                <?php endif ; ?>
+                    <!-- Pemisah Visual (Opsional, untuk memberi jarak antara tombol manajemen dan aksi status) -->
+                    <div class="border-start mx-1"></div>
+
+                    <!-- Aksi Berdasarkan Status Transaksi -->
+                    <?php if($transaksi['status_transaksi'] == 'selesai') : ?>
+                        
+                        <button type="button" onclick="window.print()" class="btn-table-action btn-custom-primary">
+                            <i class="bi bi-printer me-1"></i> Cetak Invoice
+                        </button>
+                        
+                    <?php elseif($transaksi['status_transaksi'] == 'pending') : ?>
+                        
+                        <!-- Tombol Batal -->
+                        <button type="button" class="btn-custom btn-custom-danger" title="Tolak Transaksi" 
+                            data-bs-toggle="modal" data-bs-target="#rejectModal<?= $transaksi['id']; ?>">
+                            <i class="bi bi-x-lg me-1"></i> Batal
+                        </button>
+                        
+                        <!-- Tombol Selesai (Aksi Utama/Positif diletakkan paling ujung kanan) -->
+                        <button type="button" class="btn-custom btn-custom-primary" title="Setujui Transaksi" 
+                            data-bs-toggle="modal" data-bs-target="#acceptModal<?= $transaksi['id']; ?>">
+                            <i class="bi bi-check-lg me-1"></i> Selesai
+                        </button>
+                        
+                    <?php endif ; ?>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteTranksasi<?= $transaksi['id']; ?>" tabindex="-1" aria-labelledby="deleteTranksasiLabel<?= $transaksi['id']; ?>" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title font-weight-bold" id="deleteTranksasiLabel<?= $transaksi['id']; ?>">Konfirmasi Hapus</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <div class="mb-3">
+                        <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                        </div>
+                        <p class="mb-1 text-muted">Apakah Anda yakin ingin menghapus transaksi ini?</p>
+                        <h5 class="fw-bold text-dark mt-2"><?= $transaksi['kode_transaksi']; ?></h5>
+                        <p class="mb-0 text-muted small">Tanggal: <?= date('d/m/Y', strtotime($transaksi['tgl_transaksi'])); ?></p>
+                        
+                        <!-- BAGIAN YANG DIPERBAIKI -->
+                        <small class="text-danger mt-3 d-block text-wrap" style="white-space: normal; word-break: break-word;">
+                        Perhatian: Semua data detail barang di dalam transaksi ini juga akan ikut terhapus permanen!
+                        </small>
+                        
+                    </div>
+                    <div class="modal-footer border-0 pt-0 justify-content-center gap-2">
+                        <button type="button" class="btn-custom btn-custom-light px-4" data-bs-dismiss="modal">Batal</button>
+                        <form action="/transaksi/delete/<?= $transaksi['id']; ?>" method="POST" class="d-inline">
+                        <?= csrf_field(); ?>
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" class="btn-custom btn-custom-danger px-4">Ya, Hapus Data</button>
+                        </form>
+                    </div>
+                    </div>
+                </div>
             </div>
 
             <!-- ================= MODAL SETUJUI (ACCEPT) ================= -->

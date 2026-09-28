@@ -87,8 +87,8 @@ $jumlahVarian = ($oldUkuran && is_array($oldUkuran)) ? count($oldUkuran) : 1;
                       <label class="form-label-custom">Ukuran Varian Kopi</label>
                       <input type="hidden" name="ukuran[]" class="ukuran_final" value="<?= isset($oldUkuran[$i]) ? $oldUkuran[$i] : ''; ?>">
                       <div class="input-group">
-                          <input type="number" class="form-control-custom form-control ukuran_angka" value="<?= $angka; ?>" placeholder="Contoh: 250" required>
-                          <select class="form-select ukuran_satuan" style="max-width: 100px; cursor: pointer;">
+                          <input type="number" class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all form-control ukuran_angka" value="<?= $angka; ?>" placeholder="Contoh: 250" required>
+                          <select class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-allukuran_satuan" style="max-width: 100px; cursor: pointer;">
                               <option value="ml" <?= $satuan == 'ml' ? 'selected' : ''; ?>>ml</option>
                               <option value="L" <?= $satuan == 'L' ? 'selected' : ''; ?>>L</option>
                           </select>
@@ -116,7 +116,7 @@ $jumlahVarian = ($oldUkuran && is_array($oldUkuran)) ? count($oldUkuran) : 1;
                     <!-- Stok -->
                     <div class="mb-3">
                       <label class="form-label-custom">Stok Varian Kopi</label>
-                      <input type="number" class="form-control-custom" name="stok[]" value="<?= isset($oldStok[$i]) ? $oldStok[$i] : ''; ?>" placeholder="Masukkan stok" required>
+                      <input type="number" class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all" name="stok[]" value="<?= isset($oldStok[$i]) ? $oldStok[$i] : ''; ?>" placeholder="Masukkan stok" required>
                     </div>
 
                     <!-- Diskon -->
@@ -131,7 +131,7 @@ $jumlahVarian = ($oldUkuran && is_array($oldUkuran)) ? count($oldUkuran) : 1;
                       </div>
                       <div class="col-md-6 mb-3">
                         <label class="form-label-custom">Jumlah Diskon</label>
-                        <input type="number" class="form-control-custom" name="diskon[]" value="<?= isset($oldDiskon[$i]) ? $oldDiskon[$i] : '0'; ?>" required>
+                        <input type="number" class="w-full px-3 py-2.5 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all" name="diskon[]" value="<?= isset($oldDiskon[$i]) ? $oldDiskon[$i] : '0'; ?>" required>
                       </div>
                     </div>
                 </div>

@@ -37,7 +37,7 @@
                 <label for="nama" class="form-label-custom">Nama Varian Kopi</label>
                 <input 
                 type="text" 
-                class="form-control-custom <?= (validation_show_error('nama')) ? 'is-invalid' : ''; ?>" 
+                class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all <?= (validation_show_error('nama')) ? 'is-invalid' : ''; ?>" 
                 id="nama" 
                 name="nama" 
                 value="<?= old('nama', $product['nama']); ?>" 
@@ -53,7 +53,7 @@
                 <label for="deskripsi" class="form-label-custom">Deskripsi Varian Kopi</label>
                 <textarea
                 rows="3"
-                class="form-control-custom <?= (validation_show_error('deskripsi')) ? 'is-invalid' : ''; ?>" 
+                class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all <?= (validation_show_error('deskripsi')) ? 'is-invalid' : ''; ?>" 
                 id="deskripsi" 
                 name="deskripsi"
                 placeholder="Masukkan deskripsi tentang varian kopi"><?= old('deskripsi', $product['deskripsi']); ?></textarea>
@@ -74,7 +74,7 @@
                 </div>
             <input 
                 type="file" 
-                class="form-control-custom <?= (validation_show_error('gambar')) ? 'is-invalid' : ''; ?>" 
+                class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all <?= (validation_show_error('gambar')) ? 'is-invalid' : ''; ?>" 
                 id="gambar" 
                 name="gambar" 
                 accept="image/*" 

@@ -21,8 +21,8 @@ $routes->group('product', ['namespace' => 'Modules\Products\Controllers', 'filte
 // Manajemen varian dan stok produk
 $routes->group('sizes-product', ['namespace' => 'Modules\Products\Controllers', 'filter' => 'authFilter'], static function ($routes) {
     $routes->get('/', 'SizeProduct::index');
-    $routes->get('create/(:num)', 'SizeProduct::create');
-    $routes->post('store/', 'SizeProduct::store');
+    $routes->get('create', 'SizeProduct::create');
+    $routes->post('store', 'SizeProduct::store');
     $routes->get('edit/(:num)', 'SizeProduct::edit/$1');
     $routes->post('update/(:num)', 'SizeProduct::update/$1');
     $routes->delete('delete/(:num)', 'SizeProduct::delete/$1');

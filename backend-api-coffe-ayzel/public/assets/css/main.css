@@ -3192,5 +3192,48 @@ span.flatpickr-weekday {
     color: var(--brand-lime) !important;
 }
 
+/* 1. Menyamakan tinggi, border-radius, dan warna garis luar dengan input Kuantitas */
+.select2-container .select2-selection--single {
+    height: 46px !important; /* Tinggi yang setara dengan py-3 */
+    border-radius: 0.75rem !important; /* Setara dengan rounded-xl */
+    border: 1px solid #e2e8f0 !important; /* Setara border-slate-200 */
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 1rem !important; /* Setara px-4 */
+    background-color: #ffffff !important;
+}
 
+/* 2. Merapikan posisi teks pilihan produk (text-sm, text-slate-800) */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding-left: 0 !important;
+    padding-right: 2rem !important; /* Memberi ruang agar teks tidak menabrak ikon panah */
+    font-size: 0.875rem !important; 
+    color: #1e293b !important; 
+    line-height: normal !important;
+    width: 100%;
+}
 
+/* 3. Memperbaiki posisi ikon panah bawah di sisi kanan */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 100% !important;
+    right: 15px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* 4. Memperbaiki posisi tombol clear (ikon "x") agar tidak bertumpuk dengan panah */
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    margin-right: 1.25rem !important; /* Menggeser "x" sedikit ke kiri */
+    font-size: 1.25rem !important;
+    color: #94a3b8 !important; /* Warna abu-abu yang lebih kalem */
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+}
+
+/* 5. Efek saat dropdown diklik (Focus State) */
+.select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: #64748b !important; /* Setara focus:border-slate-500 */
+    box-shadow: 0 0 0 1px #64748b !important; /* Setara focus:ring-1 */
+    outline: none !important;
+}

@@ -48,7 +48,7 @@
                         <label for="produk_id" class="form-label">Pilih Produk <span class="text-danger">*</span></label>
                         
                         <!-- 1. Select diberi atribut 'disabled' (nama 'name' dihapus agar tidak bentrok) -->
-                        <select class="form-select <?= (validation_show_error('produk_id')) ? 'is-invalid' : ''; ?>" id="produk_id" disabled>
+                        <select class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all form-select <?= (validation_show_error('produk_id')) ? 'is-invalid' : ''; ?>" id="produk_id" disabled>
                             <option value="">-- Pilih Produk --</option>
                             <?php foreach($products as $p): ?>
                                 <option value="<?= $p['id']; ?>" <?= old('produk_id', $sizes['produk_id']) == $p['id'] ? 'selected' : ''; ?>>
@@ -72,7 +72,7 @@
                         <!-- Input Angka -->
                         <input 
                             type="number" 
-                            class="form-control-custom form-control <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" 
+                            class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all form-control <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" 
                             id="ukuran_angka" 
                             value="<?= $angka; ?>" 
                             placeholder="Contoh: 250" 
@@ -81,7 +81,7 @@
                         
                         <!-- Dropdown Satuan -->
                         <select 
-                            class="form-select <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" 
+                            class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all form-select <?= (validation_show_error('ukuran')) ? 'is-invalid' : ''; ?>" 
                             id="ukuran_satuan" 
                             onchange="gabungkanUkuran()" 
                             style="max-width: 100px; cursor: pointer;">
@@ -105,7 +105,7 @@
                             <span class="input-group-text-custom">Rp.</span>
                             <input 
                                 type="number" 
-                                class="form-control-custom <?= (validation_show_error('harga_modal')) ? 'is-invalid' : ''; ?>" 
+                                class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all form-control-custom <?= (validation_show_error('harga_modal')) ? 'is-invalid' : ''; ?>" 
                                 id="harga_modal" 
                                 name="harga_modal" 
                                 value="<?= old('harga_modal', $sizes['harga_modal']); ?>" 
@@ -121,7 +121,7 @@
                             <span class="input-group-text-custom">Rp.</span>
                             <input 
                             type="number" 
-                            class="form-control-custom <?= (validation_show_error('harga_jual')) ? 'is-invalid' : ''; ?>" 
+                            class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all form-control-custom <?= (validation_show_error('harga_jual')) ? 'is-invalid' : ''; ?>" 
                             id="harga_jual" 
                             name="harga_jual" 
                             value="<?= old('harga_jual', $sizes['harga_jual']); ?>" 
@@ -133,7 +133,7 @@
                     <!-- 4. Stok -->
                     <div class="mb-3">
                         <label for="stok" class="form-label">Stok Awal <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control <?= (validation_show_error('stok')) ? 'is-invalid' : ''; ?>" id="stok" name="stok" value="<?= old('stok', $sizes['stok']); ?>" required>
+                        <input type="number" class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all form-control <?= (validation_show_error('stok')) ? 'is-invalid' : ''; ?>" id="stok" name="stok" value="<?= old('stok', $sizes['stok']); ?>" required>
                         <div class="invalid-feedback"><?= validation_show_error('stok'); ?></div>
                     </div>
 
@@ -141,7 +141,7 @@
                         <!-- 5. Tipe Diskon -->
                         <div class="col-md-6 mb-3">
                             <label for="tipe_diskon" class="form-label">Tipe Diskon <span class="text-danger">*</span></label>
-                            <select class="form-select <?= (validation_show_error('tipe_diskon')) ? 'is-invalid' : ''; ?>" id="tipe_diskon" name="tipe_diskon" required>
+                            <select class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all form-select <?= (validation_show_error('tipe_diskon')) ? 'is-invalid' : ''; ?>" id="tipe_diskon" name="tipe_diskon" required>
                                 <option value="nominal" <?= old('tipe_diskon', $sizes['tipe_diskon']) == 'nominal' ? 'selected' : ''; ?>>Nominal (Rp)</option>
                                 <option value="persen" <?= old('tipe_diskon', $sizes['tipe_diskon']) == 'persen' ? 'selected' : ''; ?>>Persentase (%)</option>
                             </select>
@@ -153,7 +153,7 @@
                             <label for="diskon" class="form-label">Jumlah Diskon</label>
                             <input 
                                 type="number" 
-                                class="form-control <?= (validation_show_error('diskon')) ? 'is-invalid' : ''; ?>" 
+                                class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all <?= (validation_show_error('diskon')) ? 'is-invalid' : ''; ?>" 
                                 id="diskon" 
                                 name="diskon" 
                                 value="<?= old('diskon', $sizes['diskon']); ?>">

@@ -32,18 +32,22 @@
 
         <!-- Nama Varian Kopi -->
         <div class="mb-3">
-          <label for="nama" class="form-label-custom">Nama Varian Kopi</label>
+          <label for="nama" class="block text-sm font-semibold text-slate-800 mb-2">Nama Varian Kopi</label>
           <input 
             type="text" 
-            class="form-control-custom <?= (validation_show_error('nama')) ? 'is-invalid' : ''; ?>" 
+            class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all <?= (validation_show_error('nama')) ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-200 focus:border-slate-500 focus:ring-slate-500'; ?>" 
             id="nama" 
             name="nama" 
             value="<?= old('nama'); ?>" 
             placeholder="Masukkan nama varian kopi" 
             required>
-          <div class="form-feedback-custom invalid-custom">
-            </i><?= validation_show_error('nama'); ?>
-          </div>
+          
+          <!-- Pesan Error Validasi -->
+          <?php if(validation_show_error('nama')): ?>
+            <div class="text-xs text-red-500 mt-1.5 font-medium">
+              <?= validation_show_error('nama'); ?>
+            </div>
+          <?php endif; ?>
         </div>
 
         <!-- Deskripsi Kopi -->
@@ -51,7 +55,7 @@
           <label for="deskripsi" class="form-label-custom">Deskripsi Varian Kopi</label>
           <textarea
             rows="3"
-            class="form-control-custom <?= (validation_show_error('deskripsi')) ? 'is-invalid' : ''; ?>" 
+            class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all <?= (validation_show_error('deskripsi')) ? 'is-invalid' : ''; ?>" 
             id="deskripsi" 
             name="deskripsi"
             placeholder="Masukkan deskripsi tentang varian kopi"><?= old('deskripsi'); ?></textarea>
@@ -72,7 +76,7 @@
           </div>
           <input 
             type="file" 
-            class="form-control-custom <?= (validation_show_error('gambar')) ? 'is-invalid' : ''; ?>" 
+            class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all <?= (validation_show_error('gambar')) ? 'is-invalid' : ''; ?>" 
             id="gambar" 
             name="gambar" 
             accept="image/*" 
