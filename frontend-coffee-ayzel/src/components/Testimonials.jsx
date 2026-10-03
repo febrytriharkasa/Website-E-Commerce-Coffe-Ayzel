@@ -121,7 +121,7 @@ export default function Testimonials() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-amber-600">
+      <section className="py-16 md:py-24 bg-gray-900">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -129,10 +129,10 @@ export default function Testimonials() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-amber-400 mb-6">
               Bergabung dengan 1,000+ Pecinta Kopi
             </h2>
-            <p className="text-amber-100 text-lg max-w-2xl mx-auto mb-8">
+            <p className="text-white text-lg max-w-2xl mx-auto mb-8">
               Pesan sekarang dan rasakan sendiri kenapa Ayzel Coffee jadi pilihan
               utama kopi kekinian di Indonesia!
             </p>
@@ -143,7 +143,7 @@ export default function Testimonials() {
               smooth={true}
               offset={-80}
               duration={500}
-              className="inline-block px-8 py-4 bg-white text-amber-700 font-bold rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer"
+              className="inline-block px-8 py-4 bg-amber-500 text-white font-bold rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer"
             >
               Pesan Sekarang
             </Link>

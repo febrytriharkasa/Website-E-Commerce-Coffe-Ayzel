@@ -160,7 +160,7 @@
                             <!-- Input Field -->
                             <div class="mb-4">
                               <input type="number" 
-                                    class="form-control text-center" 
+                                    class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all text-center" 
                                     id="tambahan_stok_<?= $v['id']; ?>" 
                                     name="tambah_stok" 
                                     min="1" 

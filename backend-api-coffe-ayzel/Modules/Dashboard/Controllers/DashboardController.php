@@ -50,15 +50,11 @@ class DashboardController extends BaseController
         $db = \Config\Database::connect();
 
         // 4. Hitung Total Keuntungan (Berdasarkan transaksi selesai)
-        $builder = $db->table('tb_detail_transaksi');
-        $builder->selectSum('tb_detail_transaksi.subtotal', 'total_jual');
-        $builder->selectSum('tb_detail_transaksi.subtotal_modal', 'total_modal');
-        
-        // Perbaikan Error #1054: Join ke tabel transaksi agar bisa membaca tgl_transaksi
-        $builder->join('tb_transaksi', 'tb_transaksi.id = tb_detail_transaksi.transaksi_id');
-        
-        // Filter HANYA transaksi yang selesai
-        $builder->where('tb_transaksi.status_transaksi', 'selesai');
+        $builder = $db->table('tb_detail_transaksi')
+                        ->selectSum('tb_detail_transaksi.subtotal', 'total_jual')
+                        ->selectSum('tb_detail_transaksi.subtotal_modal', 'total_modal')
+                        ->join('tb_transaksi', 'tb_transaksi.id = tb_detail_transaksi.transaksi_id')
+                        ->where('tb_transaksi.status_transaksi', 'selesai');
     
         if ($dateFilter) {
             $builder->where($dateFilter);
@@ -71,8 +67,8 @@ class DashboardController extends BaseController
 
         // 5. Total penjualan per periode untuk chart (Hanya transaksi selesai)
         $chartBuilder = $db->table('tb_detail_transaksi');
-        $chartBuilder->join('tb_transaksi', 'tb_transaksi.id = tb_detail_transaksi.transaksi_id');
-        $chartBuilder->where('tb_transaksi.status_transaksi', 'selesai')
+        $chartBuilder->join('tb_transaksi', 'tb_transaksi.id = tb_detail_transaksi.transaksi_id')
+                    ->where('tb_transaksi.status_transaksi', 'selesai')
                     ->where('tb_transaksi.deleted_at', null);
         
         if ($dateFilter) {
@@ -84,26 +80,36 @@ class DashboardController extends BaseController
         if ($period === 'all') {
             $chartBuilder->select('DATE(tb_transaksi.tgl_transaksi) as tgl, SUM(tb_detail_transaksi.subtotal) as total', false)
                 ->where('tb_transaksi.tgl_transaksi >= DATE_SUB(NOW(), INTERVAL 30 DAY)')
+                ->where('tb_transaksi.deleted_at', null)
+                ->where('tb_transaksi.status_transaksi !=', 'batal')
                 ->groupBy('DATE(tb_transaksi.tgl_transaksi)')
                 ->orderBy('tgl', 'ASC');
         } elseif ($period === 'hari') {
             $chartBuilder->select('tb_transaksi.tgl_transaksi as tgl, SUM(tb_detail_transaksi.subtotal) as total', false)
                 ->where('tb_transaksi.tgl_transaksi >= DATE_SUB(NOW(), INTERVAL 7 DAY)')
+                ->where('tb_transaksi.deleted_at', null)
+                ->where('tb_transaksi.status_transaksi !=', 'batal')
                 ->groupBy('tb_transaksi.tgl_transaksi')
                 ->orderBy('tgl', 'ASC');
         } elseif ($period === 'minggu') {
             $chartBuilder->select('YEARWEEK(tb_transaksi.tgl_transaksi, 1) as minggu, SUM(tb_detail_transaksi.subtotal) as total', false)
                 ->where('tb_transaksi.tgl_transaksi >= DATE_SUB(NOW(), INTERVAL 4 WEEK)')
+                ->where('tb_transaksi.deleted_at', null)
+                ->where('tb_transaksi.status_transaksi !=', 'batal')
                 ->groupBy('minggu')
                 ->orderBy('minggu', 'ASC');
         } elseif ($period === 'bulan') {
             $chartBuilder->select('DATE_FORMAT(tb_transaksi.tgl_transaksi, "%Y-%m") as bulan, SUM(tb_detail_transaksi.subtotal) as total', false)
                 ->where('tb_transaksi.tgl_transaksi >= DATE_SUB(NOW(), INTERVAL 6 MONTH)')
+                ->where('tb_transaksi.deleted_at', null)
+                ->where('tb_transaksi.status_transaksi !=', 'batal')
                 ->groupBy('bulan')
                 ->orderBy('bulan', 'ASC');
         } elseif ($period === 'tahun') {
             $chartBuilder->select('YEAR(tb_transaksi.tgl_transaksi) as tahun, SUM(tb_detail_transaksi.subtotal) as total', false)
                 ->where('tb_transaksi.tgl_transaksi >= DATE_SUB(NOW(), INTERVAL 3 YEAR)')
+                ->where('tb_transaksi.deleted_at', null)
+                ->where('tb_transaksi.status_transaksi !=', 'batal')
                 ->groupBy('tahun')
                 ->orderBy('tahun', 'ASC');
         }
@@ -116,24 +122,13 @@ class DashboardController extends BaseController
             $chartData[$chartKey] = $row['total'] ?? 0;
         }
 
-        // 6. Stok produk yang habis/terendam (Abaikan Soft Delete)
-        $lowStockQuery = $db->table('tb_size_product');
-        $lowStockQuery->select('tb_size_product.ukuran, tb_product.nama, tb_size_product.stok');
-        $lowStockQuery->join('tb_product', 'tb_product.id = tb_size_product.produk_id');
-        $lowStockQuery->where('tb_size_product.stok <', 5);
-        $lowStockQuery->where('tb_size_product.deleted_at', null); // Abaikan data yang sudah di soft delete
-       
-        $lowStockItems = $lowStockQuery->get()->getResultArray(); 
-        $lowStockCount = count($lowStockItems);
-
         // 7. Detail stok keluar per periode
-        $stockKeluarBuilder = $db->table('tb_detail_transaksi');
-        $stockKeluarBuilder->select('tb_size_product.ukuran, SUM(tb_detail_transaksi.qty) as total_keluar, DATE(tb_transaksi.tgl_transaksi) as tgl');
-        $stockKeluarBuilder->join('tb_size_product', 'tb_size_product.id = tb_detail_transaksi.size_product_id', 'left');
-        $stockKeluarBuilder->join('tb_transaksi', 'tb_transaksi.id = tb_detail_transaksi.transaksi_id', 'left');
-        
-        $stockKeluarBuilder->where('tb_transaksi.status_transaksi', 'selesai'); // Hanya hitung stok dari transaksi selesai
-        $stockKeluarBuilder->where('tb_size_product.deleted_at', null); // Abaikan varian yang dihapus
+        $stockKeluarBuilder = $db->table('tb_detail_transaksi')
+                                ->select('tb_size_product.ukuran, SUM(tb_detail_transaksi.qty) as total_keluar, DATE(tb_transaksi.tgl_transaksi) as tgl')
+                                ->join('tb_size_product', 'tb_size_product.id = tb_detail_transaksi.size_product_id', 'left')
+                                ->join('tb_transaksi', 'tb_transaksi.id = tb_detail_transaksi.transaksi_id', 'left')
+                                ->where('tb_transaksi.status_transaksi', 'selesai') // Hanya hitung stok dari transaksi selesai
+                                ->where('tb_size_product.deleted_at', null); // Abaikan varian yang dihapus
         
         if ($period !== 'all') {
             $stockKeluarBuilder->where($dateFilter);
@@ -151,12 +146,11 @@ class DashboardController extends BaseController
             'transaksi'        => $this->transaksiModel->where('status_transaksi', 'pending')->findAll(),
             'total_transaksi'  => $totalTransaksi,
             'total_keuntungan' => $totalKeuntungan,
-            'low_stock_count'  => $lowStockCount,
             'chart_data'       => json_encode(array_values($chartData)),
             'chart_labels'     => json_encode(array_keys($chartData)),
             'period'           => $period,
             'stock_keluar'     => $stockKeluarRows,
-            'low_stock_items'  => $lowStockItems,
+
         ];
 
         return view('Modules\Dashboard\Views\dashboard', $data);

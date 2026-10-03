@@ -58,7 +58,7 @@ class SizeProductModel extends Model
         return $this->select('tb_size_product.*, tb_product.nama, tb_product.jenis')
         ->join('tb_product', 'tb_product.id = tb_size_product.produk_id', 'left')
         ->orderBy('tb_size_product.stok', 'ASC')
-        ->findAll(5);
+        ->findAll(10);
     }
 
     // Fungsi untuk mengatur diskon

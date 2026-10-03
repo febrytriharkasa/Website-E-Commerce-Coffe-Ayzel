@@ -33,9 +33,6 @@ export default function About() {
               </p>
             </motion.div>
           </div>
-        </section>
-
-        <section className="py-2 md:py-4 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-6 pt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <motion.div
@@ -44,7 +41,7 @@ export default function About() {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.6 }}
               >
-                <div className="rounded-3xl shadow-2xl overflow-hidden bg-black flex items-center justify-center">
+                <div className="flex items-center justify-center">
                    <img 
                      className="w-full h-auto max-w-lg" 
                      loading="lazy"

@@ -125,21 +125,29 @@ export default function Products() {
       })),
     };
 
+    let message = 'Halo Ayzel Coffee! Saya mau pesan:\n\n';
+    cartItems.forEach((item) => {
+      message += `- ${item.name} (${item.displaySize}) x${item.qty} = ${formatCurrency(item.price * item.qty)}\n`;
+    });
+    message += `\nTotal: ${formatCurrency(totalPrice)}`;
+    message += '\n\nMohon konfirmasi ketersediaan dan ongkir. Terima kasih!';
+
     try {
       await createTransaction(payload);
-      let message = 'Halo Ayzel Coffee! Saya mau pesan:\n\n';
-      cartItems.forEach((item) => {
-        message += `- ${item.name} (${item.displaySize}) x${item.qty} = ${formatCurrency(item.price * item.qty)}\n`;
-      });
-      message += `\nTotal: ${formatCurrency(totalPrice)}`;
-      message += '\n\nMohon konfirmasi ketersediaan dan ongkir. Terima kasih!';
-      window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
-      setCart({});
-      setShowCart(false);
+    } catch (error) {
+      console.error('Gagal membuat transaksi:', error.message);
+    }
+
+    window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    setCart({});
+    setShowCart(false);
+    localStorage.removeItem(CART_STORAGE_KEY);
+
+    try {
       const newData = await getProductsFromAPI();
       setProducts(newData);
     } catch (error) {
-      alert('Gagal membuat transaksi: ' + error.message);
+      console.error('Gagal mengambil data produk:', error.message);
     } finally {
       setIsCheckoutLoading(false);
     }
@@ -409,7 +417,7 @@ export default function Products() {
                     </div>
                     <div className="flex items-center gap-2">
                       <button onClick={() => removeFromCart(item.id, item.displaySize)} className="w-7 h-7 rounded-full bg-amber-100 text-amber-700 font-bold hover:bg-amber-200 transition-colors flex items-center justify-center text-sm">-</button>
-                      <span className="w-6 text-center font-bold text-sm">{item.qty}</span>
+                      <span className="w-6 text-center font-bold text-gray-900 text-sm">{item.qty}</span>
                       <button onClick={() => addToCart(item.id, item.displaySize, item.stocks?.[item.displaySize] || 0)} className="w-7 h-7 rounded-full bg-amber-600 text-white font-bold hover:bg-amber-700 transition-colors flex items-center justify-center text-sm">+</button>
                     </div>
                     <button onClick={() => deleteFromCart(item.id, item.displaySize)} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all" aria-label={`Hapus ${item.name}`}>

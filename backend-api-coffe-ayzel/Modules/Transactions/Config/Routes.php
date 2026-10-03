@@ -21,7 +21,12 @@ $routes->group('transaksi-approvel', ['namespace' => 'Modules\Transactions\Contr
     $routes->get('/', 'ApprovelTransaksiController::index');
     $routes->post('approvel-accept/(:num)', 'ApprovelTransaksiController::approvelTransaksiAccept/$1');
     $routes->post('approvel-reject/(:num)', 'ApprovelTransaksiController::approvelTransaksiReject/$1');
-    // Sesuaikan nama controller-nya
+    $routes->get('show/(:num)', 'ApprovelTransaksiController::show/$1');
+});
+
+// Fungsi Batal Otomatis
+$routes->group('cron', ['namespace' => 'Modules\Transactions\Controllers'], static function ($routes) {
+    $routes->get('cancel-expired', 'CronController::cancelExpired');
 });
 
 // API

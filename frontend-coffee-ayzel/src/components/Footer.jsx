@@ -78,7 +78,7 @@ export default function Footer() {
         >
           <motion.div variants={brandVariant} className="lg:col-span-1">
             <div className="flex items-center gap-2 text-2xl font-bold mb-4">
-              <img src="/logo.png" alt="Logo Ayzel Coffee" className="w-12 h-12 object-contain" />
+              <img src="/logo.webp" alt="Logo Ayzel Coffee" className="w-8 h-8 object-contain" />
               <span className="text-amber-400">Ayzel Coffee</span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
@@ -122,7 +122,7 @@ export default function Footer() {
             <address className="not-italic text-gray-400 text-sm space-y-3">
               <p>Sidoarjo, Jawa Timur</p>
               <p>
-                <a href={`tel:+${socials.whatsapp}`} className="hover:text-white transition-colors">+{socials.whatsapp || '6285829211582'}</a>
+                {socials.whatsapp}
               </p>
               <p>Senin&ndash;Jumat 08:00&ndash;20:00</p>
               <p>Sabtu 09:00&ndash;18:00 &middot; Minggu 10:00&ndash;16:00</p>

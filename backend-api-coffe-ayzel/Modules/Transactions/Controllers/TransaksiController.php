@@ -63,7 +63,7 @@ class TransaksiController extends BaseController
 
         // Insert ke tb_transaksi
         $dataTransaksi = [
-            'kode_transaksi' => 'TRX-' . date('YmdHis'),
+            'kode_transaksi' => 'TRX-' . date('YmdHis') . rand(100, 999),
             'tgl_transaksi' => $tgl_transaksi,
             'total_pembayaran' => 0, // dibuat 0 dulu akan di update setelah menghuting detail transaksi
             'status_transaksi' => $status_transaksi
@@ -296,7 +296,8 @@ class TransaksiController extends BaseController
          $data = [
             'Title' => 'Detail Transaksi',
             'detail' => $this->detailModel->getSizesProductsWithDetails($id),
-            'transaksi' => $this->transaksiModel->find($id)
+            'transaksi' => $this->transaksiModel->find($id),
+            'back_url'  => base_url('transaksi')
         ];
 
         return view('Modules\Transactions\Views\show', $data);

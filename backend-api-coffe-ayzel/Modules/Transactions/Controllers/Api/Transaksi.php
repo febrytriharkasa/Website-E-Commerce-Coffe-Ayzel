@@ -28,7 +28,7 @@ class Transaksi extends ResourceController
 
         // Simpan ke tabel induk (tb_transaksi)
         $transaksiData = [
-            'kode_transaksi' => $json['kode_transaksi'],
+            'kode_transaksi' => 'TRX-' . date('YmdHis') . rand(100, 999),
             'tgl_transaksi' => date('Y-m-d H:i:s'),
             'total_pembayaran' => 0,
             'status_transaksi' => 'pending'

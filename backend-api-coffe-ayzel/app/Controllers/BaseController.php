@@ -42,6 +42,21 @@ abstract class BaseController extends Controller
 
         // Preload any models, libraries, etc, here.
         // $this->session = service('session');
+
+        $db = \Config\Database::connect();
+        // 6. Stok produk yang habis/terendam (Abaikan Soft Delete)
+        $lowStockQuery = $db->table('tb_size_product')
+                            ->select('tb_size_product.ukuran, tb_product.nama, tb_size_product.stok')
+                            ->join('tb_product', 'tb_product.id = tb_size_product.produk_id')
+                            ->where('tb_size_product.stok <', 5)
+                            ->where('tb_size_product.deleted_at', null)
+                            ->get()
+                            ->getResultArray(); 
+
+        $lowStockCount = count($lowStockQuery);
+
+        \Config\Services::renderer()->setVar('low_stock_items', $lowStockQuery);
+        \Config\Services::renderer()->setVar('low_stock_count', $lowStockCount);
         
     }
 }

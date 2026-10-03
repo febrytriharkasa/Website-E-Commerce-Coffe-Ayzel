@@ -91,7 +91,7 @@
                 
                 <!-- Grup Kiri: Navigasi -->
                 <div>
-                    <a href="/transaksi-approvel" class="btn-custom btn-custom-light">
+                    <a href="<?= $back_url ?? base_url('transaksi') ?>" class="btn-custom btn-custom-light">
                         <i class="bi bi-arrow-left me-1"></i> Kembali
                     </a>
                 </div>

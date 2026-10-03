@@ -229,7 +229,7 @@ class SizeProduct extends BaseController
                 'stok' => $stok_baru
             ]);
 
-            return redirect()->to('/sizes-product/')->with('success', 'Stok berhasil ditambahkan!');
+            return redirect()->back()->with('success', 'Stok berhasil ditambahkan!');
         }
 
         return redirect()->back()->with('error', 'Data varian tidak ditemukan!');

@@ -227,22 +227,33 @@
             <div class="space-y-2.5 custom-scrollbar max-h-56 overflow-y-auto pr-1">
               <?php foreach (array_slice($transaksi, 0, 3) as $t): ?>
                 <!-- Item Order -->
-                <div class="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 hover:bg-slate-800 transition flex items-center justify-between">
-                  <div>
-                    <p class="text-xs font-semibold text-white"><?= esc($t['kode_transaksi']); ?></p>
-                    <p class="text-[11px] text-slate-400"><?= $t['status_transaksi']; ?> • <?= date('H:i', strtotime($t['tgl_transaksi'])); ?> WIB</p>
-                  </div>
-                  <div class="text-right">
-                    <span class="inline-block text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 font-medium">
-                      <?php if ($t['status_transaksi'] === 'selesai'): ?>
-                        Selesai
-                      <?php elseif ($t['status_transaksi'] === 'pending'): ?>
-                        Pending
-                      <?php else: ?>
-                        <?= ucfirst($t['status_transaksi']); ?>
-                      <?php endif; ?>
-                    </span>
-                  </div>
+                <!-- Jika p-1 digunakan untuk jarak antar list/card, gunakan div pembungkus -->
+                <div class="p-0.5">
+                  <!-- Tag <a> sekarang bertindak langsung sebagai Card -->
+                  <a href="/transaksi-approvel/show/<?= $t['id']; ?>" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/40 border border-slate-800 hover:bg-slate-800 transition group">
+                    
+                    <!-- Bagian Kiri (Teks) -->
+                    <div>
+                      <p class="text-xs font-semibold text-white"><?= esc($t['kode_transaksi']); ?></p>
+                      <p class="text-[11px] text-slate-400 mt-0.5">
+                        <?= ucfirst($t['status_transaksi']); ?> • <?= date('H:i', strtotime($t['tgl_transaksi'])); ?> WIB
+                      </p>
+                    </div>
+                    
+                    <!-- Bagian Kanan (Badge) -->
+                    <div class="text-right">
+                      <span class="inline-block text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 font-medium group-hover:bg-emerald-500/20 transition">
+                        <?php if ($t['status_transaksi'] === 'selesai'): ?>
+                          Selesai
+                        <?php elseif ($t['status_transaksi'] === 'pending'): ?>
+                          Pending
+                        <?php else: ?>
+                          <?= ucfirst($t['status_transaksi']); ?>
+                        <?php endif; ?>
+                      </span>
+                    </div>
+                    
+                  </a>
                 </div>
               <?php endforeach; ?>
             </div>
@@ -296,7 +307,7 @@
           <thead>
             <tr class="text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
               <th class="py-3 px-3">Nama Produk</th>
-              <th class="py-3 px-3">Kategori</th>
+              <th class="py-3 px-3 text-center">Kategori</th>
               <th class="py-3 px-3 text-center">Ukuran Botol</th>
               <th class="py-3 px-3">Tingkat Persediaan</th>
               <th class="py-3 px-3 text-center">Sisa Stok</th>
@@ -317,8 +328,8 @@
                     </div>
                   </div>
                 </td>
-                <td class="py-3.5 px-3">
-                  <span class="inline-flex px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-semibold">Menu Series</span>
+                <td class="py-3.5 px-3 text-center">
+                  <span class="inline-flex tems-center px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-semibold"><?= ucwords(str_replace('-', ' ', $p['jenis'])); ?></span>
                 </td>
                 <td class="py-3.5 px-3 text-center">
                   <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
@@ -353,15 +364,54 @@
                   <?php endif; ?>
                 </td>
                 <td class="py-3.5 px-3 text-right">
-                  <?php if ($p['stok'] < 5): ?>
-                    <button class="px-2.5 py-1 text-xs font-semibold rounded-lg text-white bg-rose-600 hover:bg-rose-700 transition shadow-2xs">
-                      Restock Segera
-                    </button>
-                  <?php else: ?>
-                    <button class="px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-brand-600 hover:bg-brand-50 border border-transparent hover:border-brand-200 transition">
-                      Restock
-                    </button>
-                  <?php endif; ?>
+                <?php if ($p['stok'] < 5): ?>
+                  <!-- Tambahkan data-bs-toggle="modal" di sini -->
+                  <button class="px-2.5 py-1 text-xs font-semibold rounded-lg btn-custom btn-custom-danger" data-bs-toggle="modal" data-bs-target="#tambahStokModalDashboard<?= $p['id']; ?>">
+                    Restock Segera
+                  </button>
+                <?php else: ?>
+                  <!-- Tambahkan data-bs-toggle="modal" di sini -->
+                  <button class="px-2.5 py-1 text-xs font-semibold rounded-lg btn-custom btn-custom-primary" data-bs-toggle="modal" data-bs-target="#tambahStokModalDashboard<?= $p['id']; ?>">
+                    Restock
+                  </button>
+                <?php endif; ?>
+                  <!-- Tambah Stok Pop Up -->
+                  <div class="modal fade" id="tambahStokModalDashboard<?= $p['id']; ?>" tabindex="-1" aria-labelledby="deleteModalLabel<?= $p['id']; ?>" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                        <div class="modal-header border-0 pb-0">
+                          <h5 class="modal-title font-weight-bold" id="deleteModalLabel<?= $p['id']; ?>">Konfirmasi Hapus</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center py-4">
+                          <p class="mb-1 text-muted">Apakah Anda yakin ingin menambah stok <?= $p['nama']; ?>?</p>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                          <!-- Form dibuat w-100 (lebar 100%) agar membungkus seluruh area footer -->
+                          <form action="/sizes-product/update-stok/<?= $p['id']; ?>" method="POST" class="w-100">
+                            <?= csrf_field(); ?>
+                            
+                            <!-- Input Field -->
+                            <div class="mb-4">
+                              <input type="number" 
+                                    class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all text-center" 
+                                    id="tambahan_stok_<?= $p['id']; ?>" 
+                                    name="tambah_stok" 
+                                    min="1" 
+                                    required 
+                                    placeholder="Masukkan jumlah yang ditambahkan">
+                            </div>
+                            
+                            <!-- Area Tombol -->
+                            <div class="d-flex justify-content-center gap-2">
+                              <button type="button" class="btn-custom btn-custom-light px-4" data-bs-dismiss="modal">Batal</button>
+                              <button type="submit" class="btn-custom btn-custom-primary px-4">Tambah Stok</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </td>
               </tr>
             <?php endforeach; ?>

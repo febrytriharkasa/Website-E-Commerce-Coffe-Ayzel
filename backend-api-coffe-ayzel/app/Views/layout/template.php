@@ -284,22 +284,24 @@
 
             <!-- Menu: Manajemen Transaksi -->
             <li class="sidebar-menu-item <?= url_is('transaksi*') ? 'active' : '' ?>">
-            <a href="<?= base_url('transaksi') ?>" class="sidebar-menu-link" id="menu-uibuttons" title="Manajemen Transaksi">
-                <i class="bi bi-menu-button-wide-fill"></i>
+            <a href="<?= base_url('transaksi') ?>" class="sidebar-menu-link" id="menu-transaksi" title="Manajemen Transaksi">
+                <i class="bi bi-receipt"></i>
                 <span>Manajemen Transaksi</span>
             </a>
             </li>
 
+            <!-- Menu: Approval Transaksi -->
             <li class="sidebar-menu-item <?= url_is('transaksi-approvel*') ? 'active' : '' ?>">
-            <a href="<?= base_url('transaksi-approvel') ?>" class="sidebar-menu-link" id="menu-uibuttons" title="Manajemen Transaksi">
-                <i class="bi bi-menu-button-wide-fill"></i>
+            <a href="<?= base_url('transaksi-approvel') ?>" class="sidebar-menu-link" id="menu-approval" title="Approval Transaksi">
+                <i class="bi bi-clipboard-check"></i>
                 <span>Approvel Transaksi</span>
             </a>
             </li>
 
+            <!-- Menu: Settings / Sosial Media -->
             <li class="sidebar-menu-item <?= url_is('settings*') ? 'active' : '' ?>">
-            <a href="<?= base_url('settings') ?>" class="sidebar-menu-link" id="menu-uibuttons" title="Manajemen Transaksi">
-                <i class="bi bi-menu-button-wide-fill"></i>
+            <a href="<?= base_url('settings') ?>" class="sidebar-menu-link" id="menu-settings" title="Settings">
+                <i class="bi bi-gear"></i>
                 <span>Settings</span>
             </a>
             </li>
@@ -391,7 +393,8 @@
                           <i class="bi bi-box-seam-fill"></i>
                         </div>
                         <div class="notification-content">
-                          <p class="notification-text">Stok menipis: <strong><?= $item['nama']; ?> (<?= $item['ukuran']; ?>)</strong></p>
+                          <p class="notification-text">Stok menipis:</p>
+                          <p><?= $item['nama']; ?> (<?= $item['ukuran']; ?>)</p>
                           <span class="notification-time text-danger fw-bold">Sisa: <?= $item['stok']; ?> Unit</span>
                         </div>
                         <span class="notification-unread-dot"></span>

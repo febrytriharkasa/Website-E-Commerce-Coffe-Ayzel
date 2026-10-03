@@ -81,7 +81,7 @@
                 <td class="text-center">
                   <div class="d-flex justify-content-center gap-1">
                     <!-- Tombol Detail -->
-                    <a href="/transaksi/show/<?= $t['id']; ?>" class="btn-custom btn-custom-secondary btn-custom-sm" title="Detail Transaksi">
+                    <a href="/transaksi-approvel/show/<?= $t['id']; ?>" class="btn-custom btn-custom-secondary btn-custom-sm" title="Detail Transaksi">
                         <i class="bi bi-receipt-cutoff"></i>
                     </a>
                   </div>

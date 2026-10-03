@@ -11,10 +11,14 @@ use CodeIgniter\HTTP\ResponseInterface;
 class ApprovelTransaksiController extends BaseController
 {
     protected $transaksiModel;
+    protected $detailModel;
+    protected $sizeModel;
 
     public function __construct()
     {
         $this->transaksiModel = new TransaksiModel();
+        $this->detailModel = new DetailTransaksiModel();
+        $this->sizeModel = new SizeProductModel(); 
     }
 
     public function index()
@@ -45,20 +49,17 @@ class ApprovelTransaksiController extends BaseController
         $db = \Config\Database::connect();
         $db->transStart(); // Mulai transaksi database agar aman
 
-        $detailModel = new DetailTransaksiModel();
-        $sizeModel = new SizeProductModel();
-
         $this->transaksiModel->update($id, [
             'status_transaksi' => 'batal'
         ]);
 
-        $detailLama = $detailModel->where('transaksi_id', $id)->findAll();
+        $detailLama = $this->detailModel->where('transaksi_id', $id)->findAll();
 
         foreach ($detailLama as $old) {
-            $sizeLama = $sizeModel->find($old['size_product_id']);
+            $sizeLama = $this->sizeModel->find($old['size_product_id']);
             if ($sizeLama) {
                 $stokKembali = $sizeLama['stok'] + $old['qty'];
-                $sizeModel->update($old['size_product_id'], ['stok' =>$stokKembali]);
+                $this->sizeModel->update($old['size_product_id'], ['stok' =>$stokKembali]);
             }
         }
 
@@ -69,5 +70,17 @@ class ApprovelTransaksiController extends BaseController
         }
 
         return redirect()->back()->with('error', 'Transaksi telah dibatalkan!');
+    }
+
+    public function show($id)
+    {
+         $data = [
+            'Title' => 'Detail Transaksi',
+            'detail' => $this->detailModel->getSizesProductsWithDetails($id),
+            'transaksi' => $this->transaksiModel->find($id),
+            'back_url'  => base_url('transaksi-approvel')
+        ];
+
+        return view('Modules\Transactions\Views\show', $data);
     }
 }

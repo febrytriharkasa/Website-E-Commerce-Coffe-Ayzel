@@ -28,7 +28,7 @@ export default function Navbar() {
              >
                <picture>
                  <source srcSet="/logo.webp" type="image/webp" />
-                 <img src="/logo.png" alt="Logo Company" width="48" height="48" className="w-12 h-12" loading="eager" decoding="async" />
+                 <img src="/logo.png" alt="Logo Company" width="48" height="48" className="w-8 h-8" loading="eager" decoding="async" />
                </picture>
                <span className="hidden sm:block text-amber-400">Coffee Ayzel</span>
              </Link>
