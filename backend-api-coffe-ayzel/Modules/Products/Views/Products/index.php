@@ -56,6 +56,7 @@
             <th width="5%">No</th>
             <th width="10%">Gambar</th>
             <th width="20%">Nama Produk</th> 
+            <th>Jenis</th>
             <th>Deskripsi</th>
             <th width="15%">Aksi</th>
         </tr>
@@ -69,6 +70,7 @@
                 <img src="<?= base_url('imgProducts/' . $p['gambar']); ?>" alt="<?= $p['nama']; ?>" class="img-thumbnail" style="max-width: 80px;">
             </td>
             <td class="table-product-name"><?= $p['nama']; ?></td>
+            <td><?= ucwords(str_replace('-', ' ', $p['jenis'])); ?></td>
             <td><?= $p['deskripsi']; ?></td>
             <td>
               <div class="d-flex justify-content-center gap-1">

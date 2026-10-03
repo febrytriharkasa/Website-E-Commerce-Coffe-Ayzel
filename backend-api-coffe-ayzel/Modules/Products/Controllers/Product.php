@@ -100,7 +100,8 @@ class Product extends BaseController
         $this->productModel->save([
             'gambar'    => $namaGambar,
             'nama'      => $this->request->getVar('nama'),
-            'deskripsi' => $this->request->getVar('deskripsi')
+            'deskripsi' => $this->request->getVar('deskripsi'),
+            'jenis'     => $this->request->getVar('jenis')
         ]);
 
         return redirect()->to('/product')->with('success', 'Data produk berhasil ditambahkan!');
@@ -199,7 +200,8 @@ class Product extends BaseController
         $this->productModel->update($id, [
             'gambar'    => $namaGambar,
             'nama'      => $this->request->getVar('nama'),
-            'deskripsi' => $this->request->getVar('deskripsi')
+            'deskripsi' => $this->request->getVar('deskripsi'),
+            'jenis'     => $this->request->getVar('jenis')
         ]);
 
         return redirect()->to('/product')->with('success', 'Data produk berhasil diedit!');

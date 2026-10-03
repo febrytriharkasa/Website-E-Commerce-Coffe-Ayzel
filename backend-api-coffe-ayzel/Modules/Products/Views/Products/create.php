@@ -50,6 +50,19 @@
           <?php endif; ?>
         </div>
 
+        <!-- Dropdown Jenis -->
+        <div class="mb-3">
+          <label for="jenis" class="form-label-custom">Status Transaksi</label>
+          <select name="jenis" id="jenis" class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all <?= (validation_show_error('jenis')) ? 'is-invalid' : ''; ?>" required>
+              <option value="" selected disabled>>-- Plih Jenis --<</option>
+              <option value="kopi" <?= old('jenis') ; ?>>Kopi</option>
+              <option value="non-kopi" <?= old('jenis') ; ?>>Non-Kopi</option>
+          </select>
+          <div class="form-feedback-custom invalid-custom">
+            <?= validation_show_error('jenis'); ?>
+          </div>
+        </div>
+
         <!-- Deskripsi Kopi -->
         <div class="mb-3">
           <label for="deskripsi" class="form-label-custom">Deskripsi Varian Kopi</label>

@@ -23,7 +23,7 @@ class SizeProduct extends BaseController
 
         $limit = $this->request->getVar('limit') ?? 5;
 
-        $product = $this->productModel->select('id, nama')->paginate($limit, 'size_product');
+        $product = $this->productModel->select('id, nama, jenis')->paginate($limit, 'size_product');
 
         foreach ($product as &$p) {
             $sizes = $this->sizeModel->where('produk_id', $p['id'])->orderBy('stok', 'ASC')->findAll();

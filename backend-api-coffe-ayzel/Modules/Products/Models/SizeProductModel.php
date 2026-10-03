@@ -47,7 +47,7 @@ class SizeProductModel extends Model
 
     public function getSizesWithNameProduct()
     {
-        return $this->select('tb_size_product.*, tb_product.nama')
+        return $this->select('tb_size_product.*, tb_product.nama, tb_product.jenis')
         ->join('tb_product', 'tb_product.id = tb_size_product.produk_id', 'left')
         ->orderBy('tb_size_product.stok', 'ASC')
         ->findAll();
@@ -55,7 +55,7 @@ class SizeProductModel extends Model
 
     public function getSizesWithNameProductDash()
     {
-        return $this->select('tb_size_product.*, tb_product.nama')
+        return $this->select('tb_size_product.*, tb_product.nama, tb_product.jenis')
         ->join('tb_product', 'tb_product.id = tb_size_product.produk_id', 'left')
         ->orderBy('tb_size_product.stok', 'ASC')
         ->findAll(5);

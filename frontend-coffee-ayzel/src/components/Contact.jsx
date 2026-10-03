@@ -1,9 +1,15 @@
-import { useState } from 'react';
-
-const WA_NUMBER = '6285829211582';
+import { useState, useEffect } from 'react';
+import { getSosialMediaAPI } from '../api/api';
 
 export default function Contact() {
+  const [waNumber, setWaNumber] = useState('');
   const [form, setForm] = useState({ name: '', phone: '', message: '' });
+
+  useEffect(() => {
+    getSosialMediaAPI().then(data => {
+      if (data?.whatsapp) setWaNumber(data.whatsapp);
+    }).catch(console.error);
+  }, []);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -13,7 +19,7 @@ export default function Contact() {
     e.preventDefault();
     const text = `Halo Ayzel Coffee!\n\nNama: ${form.name}\nNo. HP: ${form.phone}\nPesan: ${form.message}`;
     window.open(
-      `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`,
+      `https://wa.me/${waNumber}?text=${encodeURIComponent(text)}`,
       '_blank',
     );
   };
@@ -127,7 +133,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">WhatsApp</p>
-                      <p className="text-sm text-gray-600">+62 858-2921-1582</p>
+                      <p className="text-sm text-gray-600">{waNumber}</p>
                       <p className="text-sm text-gray-600">Dengan Mama Ayzel</p>
                     </div>
                   </div>
@@ -159,7 +165,7 @@ export default function Contact() {
                   acara, atau reseller.
                 </p>
                 <a
-                  href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Halo Ayzel Coffee! Saya tertarik pesan dalam jumlah besar. Bisa info harga spesialnya?')}`}
+                  href={`https://wa.me/${waNumber}?text=${encodeURIComponent('Halo Ayzel Coffee! Saya tertarik pesan dalam jumlah besar. Bisa info harga spesialnya?')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-block px-5 py-2.5 bg-white text-amber-700 font-semibold rounded-full hover:bg-amber-50 transition-all duration-200"

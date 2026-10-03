@@ -48,6 +48,7 @@ export const getProductsFromAPI = async () => {
         id: item.id,
         name: item.nama,
         desc: item.deskripsi,
+        jenis: item.jenis || 'kopi',
         image: item.gambar ? `${API_BASE_URL}/imgProducts/${item.gambar}` : null,
         tag: item.tag || null,
         color: 'from-amber-100 to-amber-200',
@@ -94,3 +95,14 @@ export const createTransaction = async (payload) => {
         throw new Error('Gagal mengambil data produk server.');
     }
 };
+
+export const getSosialMediaAPI = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/settings`);
+
+    return response.data.data;
+  } catch (error) {
+    console.error("API sosial media error");
+    throw new Error('Gagal mengambil data sosail media.');
+  }
+}

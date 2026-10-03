@@ -30,9 +30,9 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="pt-16 lg:pt-20">
+    <main className="pt-16 lg:pt-20 overflow-x-hidden">
       <Element name="home">
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <section className="relative min-h-[calc(100svh-4rem)] lg:min-h-[calc(100svh-5rem)] flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110 filter blur-xl opacity-50"
             style={{ backgroundImage: `url(${bgImage})` }}
@@ -188,17 +188,17 @@ export default function Home() {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <div className="relative">
-                <div className="bg-white p-8 rounded-3xl shadow-2xl">
-                  <div className="aspect-[16/9] rounded-2xl flex items-center justify-center">
-                    <img src={butterscotch} alt="butterscotch" className="object-contain rounded-2xl" />
-                  </div>
-                </div>
-                <div className="absolute -bottom-6 -right-6 bg-amber-500 text-white p-4 rounded-xl shadow-xl animate-bounce-slow">
-                  <p className="font-bold text-2xl">0% Pengawet</p>
-                  <p className="text-sm opacity-90">100% Natural</p>
-                </div>
-              </div>
+               <div className="relative">
+                 <div className="bg-white p-8 rounded-3xl shadow-2xl">
+                   <div className="aspect-[16/9] rounded-2xl flex items-center justify-center">
+                     <img src={butterscotch} alt="Ilustrasi produk Kopi Butterscotch Ayzel Coffee" width="800" height="450" className="object-contain rounded-2xl" loading="lazy" decoding="async" />
+                   </div>
+                 </div>
+                 <div className="absolute -bottom-6 -right-6 bg-amber-500 text-white p-4 rounded-xl shadow-xl animate-bounce-slow">
+                   <p className="font-bold text-2xl">0% Pengawet</p>
+                   <p className="text-sm opacity-90">100% Natural</p>
+                 </div>
+               </div>
             </motion.div>
           </div>
         </div>

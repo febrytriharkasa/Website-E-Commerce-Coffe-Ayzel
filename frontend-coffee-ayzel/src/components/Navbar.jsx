@@ -21,14 +21,17 @@ export default function Navbar() {
       >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-2xl font-bold text-amber-900 hover:text-amber-700 transition-colors"
-            aria-label="Coffee Ayzel Home"
-          >
-            <img src="/logo.png" alt="Logo Company" className="w-12 h-12" />
-            <span className="hidden sm:block text-amber-400">Coffee Ayzel</span>
-          </Link>
+             <Link
+               to="/"
+               className="flex items-center gap-2 text-2xl font-bold text-amber-900 hover:text-amber-700 transition-colors"
+               aria-label="Coffee Ayzel Home"
+             >
+               <picture>
+                 <source srcSet="/logo.webp" type="image/webp" />
+                 <img src="/logo.png" alt="Logo Company" width="48" height="48" className="w-12 h-12" loading="eager" decoding="async" />
+               </picture>
+               <span className="hidden sm:block text-amber-400">Coffee Ayzel</span>
+             </Link>
 
           <div className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (

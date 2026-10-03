@@ -33,7 +33,8 @@ class CorsFilter implements FilterInterface
         // 2. Daftar URL frontend yang diizinkan 
         // PENTING: Pastikan tidak ada garis miring '/' di akhir URL
         $allowedOrigins = [
-            'http://localhost:5173',          // URL untuk tahap Development
+            'http://localhost:5173',         // URL untuk tahap Development
+            'http://localhost:4173',
             'https://domain-frontend-mu.com'  // URL untuk tahap Production nanti
         ];
 

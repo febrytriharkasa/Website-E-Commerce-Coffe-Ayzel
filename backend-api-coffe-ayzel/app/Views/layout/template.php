@@ -297,6 +297,13 @@
             </a>
             </li>
 
+            <li class="sidebar-menu-item <?= url_is('settings*') ? 'active' : '' ?>">
+            <a href="<?= base_url('settings') ?>" class="sidebar-menu-link" id="menu-uibuttons" title="Manajemen Transaksi">
+                <i class="bi bi-menu-button-wide-fill"></i>
+                <span>Settings</span>
+            </a>
+            </li>
+
         </ul>
         </div>
     </div>
