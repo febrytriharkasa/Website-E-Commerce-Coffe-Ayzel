@@ -24,26 +24,22 @@ class UserController extends BaseController
 
         $dataUser = $userModel->where('email', $email)->first();
 
-        if ($dataUser) {
-            $verify_pass = password_verify($password, $dataUser['password']);
+        $verify_pass = password_verify($password, $dataUser['password']);
 
-            if ($verify_pass) {
-                $sesData = [
-                    'id' => $dataUser['id'],
-                    'nama' => $dataUser['nama'],
-                    'email' => $dataUser['email'],
-                    'password' => $dataUser['password'],
-                    'logged_in' => true
-                ];
-                $sesion->set($sesData);
+        if ($verify_pass) {
+            $sesData = [
+                'id' => $dataUser['id'],
+                'nama' => $dataUser['nama'],
+                'email' => $dataUser['email'],
+                'password' => $dataUser['password'],
+                'logged_in' => true
+            ];
+            $sesion->set($sesData);
 
-                return redirect()->to('/dashboard')->with('success', 'Selamat datang, ' . $dataUser['nama']);
-            } else {
-                return redirect()->back()->with('error', 'Password yang Anda masukkan salah!');
-            }
-        } else {
-            return redirect()->back()->with('error', 'Email yang Anda masukkan salah!');
+            return redirect()->to('/dashboard')->with('success', 'Selamat datang, ' . $dataUser['nama']);
         }
+            
+        return redirect()->back()->with('error', 'Email atau password yang Anda masukkan salah!');
     }
 
     public function logout()
