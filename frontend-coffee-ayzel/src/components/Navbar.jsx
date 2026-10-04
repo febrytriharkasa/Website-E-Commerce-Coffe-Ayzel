@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { ShoppingCart } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 const navLinks = [
   { path: '/', label: 'Home' },
@@ -12,6 +14,7 @@ const navLinks = [
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { totalItems, setShowCart } = useCart();
 
   return (
     <nav
@@ -56,6 +59,19 @@ export default function Navbar() {
           </div>
 
           <div className="hidden lg:flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => setShowCart(true)}
+              className="relative p-2.5 text-gray-700 hover:text-amber-600 hover:bg-amber-50 rounded-full transition-colors cursor-pointer"
+              aria-label="Keranjang pesanan"
+            >
+              <ShoppingCart className="w-6 h-6" />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-amber-600 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md animate-in zoom-in">
+                  {totalItems > 99 ? '99+' : totalItems}
+                </span>
+              )}
+            </button>
             <Link
               to="/products"
               className="px-5 py-2.5 bg-amber-500 text-white font-medium rounded-full hover:bg-amber-700 transition-all duration-200 shadow-lg hover:shadow-amber-500/30 transform hover:-translate-y-0.5"
@@ -64,37 +80,52 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <button
-            className="lg:hidden p-2 text-gray-700 hover:text-amber-600 transition-colors"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-expanded={mobileMenuOpen}
-            aria-controls="mobile-menu"
-            aria-label="Toggle menu"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
+          <div className="flex items-center gap-1 lg:hidden">
+            <button
+              type="button"
+              onClick={() => setShowCart(true)}
+              className="relative p-2 text-gray-700 hover:text-amber-600 transition-colors cursor-pointer"
+              aria-label="Keranjang pesanan"
             >
-              {mobileMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+              <ShoppingCart className="w-6 h-6" />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-amber-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
+                  {totalItems > 99 ? '99+' : totalItems}
+                </span>
               )}
-            </svg>
-          </button>
+            </button>
+            <button
+              className="p-2 text-gray-700 hover:text-amber-600 transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
+              aria-label="Toggle menu"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                {mobileMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div
