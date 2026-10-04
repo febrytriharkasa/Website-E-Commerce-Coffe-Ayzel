@@ -114,8 +114,8 @@ export default function Products() {
     if (cartItems.length === 0) return;
     setIsCheckoutLoading(true);
 
+    // 1. Payload tidak perlu mengirim kode_transaksi lagi, biarkan BE yang buat
     const payload = {
-      kode_transaksi: `TRX-${Date.now()}`,
       total_pembayaran: totalPrice,
       items: cartItems.map((item) => ({
         size_product_id: item.variantIds[item.displaySize],
@@ -125,30 +125,43 @@ export default function Products() {
       })),
     };
 
-    let message = 'Halo Ayzel Coffee! Saya mau pesan:\n\n';
-    cartItems.forEach((item) => {
-      message += `- ${item.name} (${item.displaySize}) x${item.qty} = ${formatCurrency(item.price * item.qty)}\n`;
-    });
-    message += `\nTotal: ${formatCurrency(totalPrice)}`;
-    message += '\n\nMohon konfirmasi ketersediaan dan ongkir. Terima kasih!';
-
     try {
-      await createTransaction(payload);
+      // 2. Tunggu proses ke backend selesai dan tangkap balasannya (response)
+      const response = await createTransaction(payload);
+      
+      // 3. Ambil kode transaksi resmi dari database (backend)
+      const kodeResmi = response.kode_transaksi; 
+      
+      // 4. Susun pesan WhatsApp MENGGUNAKAN KODE DARI BACKEND
+      let message = 'Halo Ayzel Coffee! Saya mau pesan:\n\n';
+      message += `Kode Transaksi: ${kodeResmi}\n`;
+      console.log(response.kode_transaksi);
+      
+      cartItems.forEach((item) => {
+        message += `- ${item.name} (${item.displaySize}) x${item.qty} = ${formatCurrency(item.price * item.qty)}\n`;
+      });
+      
+      message += `\nTotal: ${formatCurrency(totalPrice)}`;
+      message += '\n\nMohon konfirmasi ketersediaan dan ongkir. Terima kasih!';
+
+      // 5. Buka WhatsApp
+      window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
+      
+      // 6. Bersihkan keranjang
+      setCart({});
+      setShowCart(false);
+      localStorage.removeItem(CART_STORAGE_KEY);
+      
     } catch (error) {
       console.error('Gagal membuat transaksi:', error.message);
-    }
-
-    window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
-    setCart({});
-    setShowCart(false);
-    localStorage.removeItem(CART_STORAGE_KEY);
-
-    try {
-      const newData = await getProductsFromAPI();
-      setProducts(newData);
-    } catch (error) {
-      console.error('Gagal mengambil data produk:', error.message);
+      alert('Maaf, sistem gagal memproses pesanan Anda. Silakan coba lagi.');
     } finally {
+      try {
+        const newData = await getProductsFromAPI();
+        setProducts(newData);
+      } catch (error) {
+        console.error('Gagal mengambil data produk:', error.message);
+      }
       setIsCheckoutLoading(false);
     }
   }, [cartItems, totalPrice, waNumber]);
@@ -298,7 +311,7 @@ export default function Products() {
                               </button>
                             ))}
                           </div>
-                          <div className="flex items-center justify-between gap-2 pt-1 border-t border-gray-100">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-gray-100">
                             <div>
                               <span className="text-[10px] text-gray-500 block uppercase font-medium">Harga</span>
                               {hasDiscount && (
@@ -311,35 +324,35 @@ export default function Products() {
                                 {maxStock > 0 ? `Sisa: ${maxStock}` : 'Habis'}
                               </span>
                             </div>
-                            <div>
+                            <div className="shrink-0 w-full sm:w-auto">
                               {qty === 0 ? (
                                 <button
                                   type="button"
                                   onClick={() => addToCart(product.id, currentSize, maxStock)}
                                   disabled={maxStock === 0}
                                   aria-label={`Tambah ${product.name} ${currentSize} ke keranjang`}
-                                  className="min-w-[44px] min-h-[44px] px-3.5 py-2 bg-amber-500 text-white font-medium rounded-full hover:bg-amber-600 transition-all duration-200 active:scale-95 flex items-center justify-center shadow-sm disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                  className="w-full sm:w-auto min-h-[44px] bg-amber-500 text-white font-medium rounded-full hover:bg-amber-600 transition-all duration-200 active:scale-95 flex items-center justify-center shadow-sm gap-2 py-2.5 px-6 disabled:bg-gray-300 disabled:cursor-not-allowed"
                                 >
                                   <ShoppingCart className="w-5 h-5" />
                                 </button>
                               ) : (
-                                <div className="flex items-center gap-1 bg-amber-50 p-1 rounded-full border border-amber-200">
+                                <div className="flex items-center justify-between sm:justify-center gap-2 bg-amber-50 px-2 py-1.5 rounded-full border border-amber-200 w-full sm:w-auto">
                                   <button
                                     type="button"
                                     onClick={() => removeFromCart(product.id, currentSize)}
-                                    className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-white text-amber-700 font-bold hover:bg-amber-100 transition-colors flex items-center justify-center text-sm shadow-sm"
+                                    className="w-9 h-9 rounded-full bg-white text-amber-700 font-bold hover:bg-amber-100 transition-colors flex items-center justify-center text-lg shadow-sm active:scale-95"
                                     aria-label={`Kurangi jumlah ${product.name} ${currentSize}`}
                                   >
                                     -
                                   </button>
-                                  <span className="w-6 text-center font-bold text-gray-900 text-xs" aria-live="polite">
+                                  <span className="min-w-[32px] px-1 text-center font-bold text-gray-900 text-base" aria-live="polite">
                                     {qty}
                                   </span>
                                   <button
                                     type="button"
                                     onClick={() => addToCart(product.id, currentSize, maxStock)}
                                     disabled={qty >= maxStock}
-                                    className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-amber-600 text-white font-bold hover:bg-amber-700 transition-colors flex items-center justify-center text-sm shadow-sm disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                    className="w-9 h-9 rounded-full bg-amber-600 text-white font-bold hover:bg-amber-700 transition-colors flex items-center justify-center text-lg shadow-sm active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed"
                                     aria-label={`Tambah jumlah ${product.name} ${currentSize}`}
                                   >
                                     +

@@ -28,7 +28,7 @@ class Transaksi extends ResourceController
 
         // Simpan ke tabel induk (tb_transaksi)
         $transaksiData = [
-            'kode_transaksi' => 'TRX-' . date('YmdHis') . rand(100, 999),
+            'kode_transaksi' => 'CAY-' . date('YmdHis'),
             'tgl_transaksi' => date('Y-m-d H:i:s'),
             'total_pembayaran' => 0,
             'status_transaksi' => 'pending'
@@ -94,7 +94,8 @@ class Transaksi extends ResourceController
 
         return $this->respondCreated([
             'status' => true,
-            'message' => 'Transaksi berhasil disimpan dan stok diperbarui!'
+            'message' => 'Transaksi berhasil disimpan dan stok diperbarui!',
+            'kode_transaksi' => $transaksiData['kode_transaksi']
         ]);
     }
 

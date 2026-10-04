@@ -63,7 +63,7 @@ class TransaksiController extends BaseController
 
         // Insert ke tb_transaksi
         $dataTransaksi = [
-            'kode_transaksi' => 'TRX-' . date('YmdHis') . rand(100, 999),
+            'kode_transaksi' => 'CAY-' . date('YmdHis'),
             'tgl_transaksi' => $tgl_transaksi,
             'total_pembayaran' => 0, // dibuat 0 dulu akan di update setelah menghuting detail transaksi
             'status_transaksi' => $status_transaksi
