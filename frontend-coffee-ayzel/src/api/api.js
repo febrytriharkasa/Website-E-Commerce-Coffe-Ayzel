@@ -1,16 +1,8 @@
 // Import library axios untuk melakukan HTTP request (GET, POST, dll) ke backend
 import axios from 'axios';
+import { mapApiProduct } from './productMapper';
 
-// Definisi URL dasar (base URL) dari server backend lokal Anda
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-
-const parseSizeToMl = (str) => {
-  const lower = str.toLowerCase();
-  const val = parseFloat(lower);
-  if (lower.includes('ml')) return val;
-  if (lower.includes('l')) return val * 1000;
-  return val;
-};
 
 // Export fungsi asynchronous agar bisa dipanggil di komponen React/Vue lain
 export const getProductsFromAPI = async () => {
@@ -18,54 +10,10 @@ export const getProductsFromAPI = async () => {
     const response = await axios.get(`${API_BASE_URL}/api/produk`);
     const apiData = response.data.data;
 
-    return apiData.map((item) => {
-      const sortedSizes = [...item.sizes].sort((a, b) => parseSizeToMl(a.ukuran) - parseSizeToMl(b.ukuran));
-      const sizesArray = sortedSizes.map(s => s.ukuran);
-
-      const pricesObject = {};
-      const originalPricesObject = {}; 
-      const stocksObject = {};
-      
-      // 1. TAMBAHKAN OBJEK BARU UNTUK ID VARIAN & HARGA MODAL
-      const variantIdsObject = {};
-      const modalPricesObject = {};
-
-      let totalStokProduk = 0;
-
-      item.sizes.forEach(s => { 
-        pricesObject[s.ukuran] = parseInt(s.harga_akhir || s.harga_jual);
-        originalPricesObject[s.ukuran] = parseInt(s.harga_jual);
-        stocksObject[s.ukuran] = parseInt(s.stok || 0);
-        
-        // 2. SIMPAN ID VARIAN DAN HARGA MODAL BERDASARKAN UKURAN
-        variantIdsObject[s.ukuran] = s.id; 
-        modalPricesObject[s.ukuran] = parseInt(s.harga_modal || 0);
-
-        totalStokProduk += parseInt(s.stok || 0);
-      });
-
-      return {
-        id: item.id,
-        name: item.nama,
-        desc: item.deskripsi,
-        jenis: item.jenis || 'kopi',
-        image: item.gambar ? `${API_BASE_URL}/imgProducts/${item.gambar}` : null,
-        tag: item.tag || null,
-        color: 'from-amber-100 to-amber-200',
-        sizes: sizesArray,
-        stok: totalStokProduk,
-        stocks: stocksObject,
-        prices: pricesObject,
-        originalPrices: originalPricesObject,
-        
-        // 3. MASUKKAN KE DALAM RETURN OBJECT
-        variantIds: variantIdsObject,
-        modalPrices: modalPricesObject
-      };
-    });
+    return apiData.map((item) => mapApiProduct(item, API_BASE_URL));
   } catch (error) {
     console.error("API error:", error);
-    throw new Error('Gagal mengambil data produk server.');
+        throw new Error('Gagal mengambil data produk server.', { cause: error });
   }
 };
 
@@ -92,7 +40,7 @@ export const createTransaction = async (payload) => {
     } catch (error) {
         // Tangkap error jaringan (seperti server mati / CORS)
         console.error("API error:", error);
-        throw new Error('Gagal mengambil data produk server.');
+    throw new Error('Gagal mengambil data produk server.', { cause: error });
     }
 };
 
@@ -101,8 +49,8 @@ export const getSosialMediaAPI = async () => {
     const response = await axios.get(`${API_BASE_URL}/api/settings`);
 
     return response.data.data;
-  } catch (error) {
-    console.error("API sosial media error");
+  } catch {
+    console.error('API sosial media error');
     throw new Error('Gagal mengambil data sosail media.');
   }
 }

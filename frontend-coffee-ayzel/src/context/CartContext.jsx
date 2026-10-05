@@ -1,12 +1,8 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { getProductsFromAPI, createTransaction, getSosialMediaAPI } from '../api/api';
+import { buildTransactionPayload, formatCurrency } from './cartUtils';
 
 const CART_STORAGE_KEY = 'ayzel_cart';
-
-export function formatCurrency(n) {
-  if (n === null || n === undefined || isNaN(n)) return 'Segera Hadir';
-  return 'Rp ' + n.toLocaleString('id-ID');
-}
 
 const CartContext = createContext(null);
 
@@ -45,13 +41,25 @@ export function CartProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    refreshProducts();
+    let ignore = false;
+    getProductsFromAPI()
+      .then((data) => {
+        if (!ignore && data) setProducts(data);
+      })
+      .catch((err) => {
+        console.error('Gagal mengambil data produk:', err);
+      });
+
     getSosialMediaAPI()
       .then((data) => {
-        if (data?.whatsapp) setWaNumber(data.whatsapp);
+        if (!ignore && data?.whatsapp) setWaNumber(data.whatsapp);
       })
       .catch(console.error);
-  }, [refreshProducts]);
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   useEffect(() => {
     saveCart(cart);
@@ -132,15 +140,7 @@ export function CartProvider({ children }) {
     if (cartItems.length === 0) return;
     setIsCheckoutLoading(true);
 
-    const payload = {
-      total_pembayaran: totalPrice,
-      items: cartItems.map((item) => ({
-        size_product_id: item.variantIds[item.displaySize],
-        qty: item.qty,
-        harga_modal: item.modalPrices[item.displaySize],
-        harga_satuan: item.price,
-      })),
-    };
+    const payload = buildTransactionPayload(cartItems, totalPrice);
 
     try {
       const response = await createTransaction(payload);
@@ -186,11 +186,13 @@ export function CartProvider({ children }) {
     isCheckoutLoading,
     sendToWhatsApp,
     getCartKey,
+    formatCurrency,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCart() {
   const context = useContext(CartContext);
   if (!context) {

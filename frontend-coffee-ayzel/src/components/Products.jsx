@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCart } from 'lucide-react';
-import { useCart, formatCurrency } from '../context/CartContext';
+import { useCart } from '../context/CartContext';
+import { formatCurrency } from '../context/cartUtils';
 
 function tagColor(tag) {
   const map = { 'Best Seller': 'bg-red-500', Favorit: 'bg-pink-500', New: 'bg-emerald-500', Limited: 'bg-violet-500', Premium: 'bg-gray-800' };

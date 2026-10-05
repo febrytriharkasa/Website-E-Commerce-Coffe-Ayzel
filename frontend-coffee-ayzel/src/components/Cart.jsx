@@ -1,4 +1,5 @@
-import { useCart, formatCurrency } from '../context/CartContext';
+import { useCart } from '../context/CartContext';
+import { formatCurrency } from '../context/cartUtils';
 import { ShoppingCart, Loader2 } from 'lucide-react';
 
 export default function Cart() {

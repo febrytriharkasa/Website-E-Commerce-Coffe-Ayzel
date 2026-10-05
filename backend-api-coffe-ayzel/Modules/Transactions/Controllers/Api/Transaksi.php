@@ -43,7 +43,8 @@ class Transaksi extends ResourceController
         foreach ($json['items'] as $item)
         {
             // Race Conditions untuk membuat request antri terlebih dahulu
-            $sizeData = $db->query("SELECT * FROM tb_size_product WHERE id = ? FOR UPDATE", [$item['size_product_id']])->getRowArray();
+            $forUpdate = $db->DBDriver === 'SQLite3' ? '' : 'FOR UPDATE';
+            $sizeData = $db->query("SELECT * FROM tb_size_product WHERE id = ? {$forUpdate}", [$item['size_product_id']])->getRowArray();
 
             if (!$sizeData) {
                 $db->transRollback();
