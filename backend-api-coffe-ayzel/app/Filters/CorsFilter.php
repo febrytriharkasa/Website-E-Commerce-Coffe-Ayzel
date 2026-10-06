@@ -35,7 +35,6 @@ class CorsFilter implements FilterInterface
         $allowedOrigins = [
             'http://localhost:5173',         // URL untuk tahap Development
             'http://localhost:4173',
-            'https://domain-frontend-mu.com'  // URL untuk tahap Production nanti
         ];
 
         // 3. Cek apakah origin masuk dalam daftar allowedOrigins

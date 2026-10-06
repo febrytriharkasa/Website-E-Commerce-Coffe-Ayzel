@@ -37,13 +37,22 @@ class DetailTransaksiModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['hapusCacheApi'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['hapusCacheApi'];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $afterDelete    = ['hapusCacheApi'];
+
+    protected function hapusCacheApi(array $data)
+    {
+        // Hapus cache API frontend
+        cache()->delete('api_daftar_produk_fe');
+        
+        // Return data agar proses model CI4 bisa berlanjut normal
+        return $data;
+    }
 
     public function getSizesProductsWithDetails($transaksiId)
     {

@@ -2,7 +2,7 @@
 <?= $this->section('content'); ?>
 
   <!-- BEGIN: MainDashboardContainer -->
-  <div class="max-w-7xl mx-auto space-y-6">
+  <div class="max-w-7xl mx-auto space-y-6 pb-4">
     
     <!-- BEGIN: HeaderSection -->
     <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2" data-purpose="dashboard-header">
@@ -425,19 +425,6 @@
       </div>
     </section>
     <!-- END: StockInventorySection -->
-
-    <!-- BEGIN: DashboardFooter -->
-    <footer class="pt-2 pb-6 text-center text-xs text-slate-400 border-t border-slate-200/60" data-purpose="system-footer">
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
-        <p>© 2026 Mama Ayzel Coffee & Beverages POS • Cloud Sync Aktif</p>
-        <div class="flex items-center gap-4 text-[11px]">
-          <a class="hover:text-slate-600" href="#">Panduan POS</a>
-          <a class="hover:text-slate-600" href="#">Laporan Akuntansi</a>
-          <a class="hover:text-slate-600" href="#">Bantuan Teknis</a>
-        </div>
-      </div>
-    </footer>
-    <!-- END: DashboardFooter -->
 
   </div>
   <!-- END: MainDashboardContainer -->

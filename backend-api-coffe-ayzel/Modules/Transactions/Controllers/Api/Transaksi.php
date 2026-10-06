@@ -93,6 +93,8 @@ class Transaksi extends ResourceController
             return $this->fail('Gagal memproses transaksi keuangan');
         }
 
+        cache()->delete('api_daftar_produk_fe');
+
         return $this->respondCreated([
             'status' => true,
             'message' => 'Transaksi berhasil disimpan dan stok diperbarui!',

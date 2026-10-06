@@ -357,7 +357,7 @@
         <i class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" data-lucide="search"></i>
         
         <!-- Perubahan pada width, rounded, dan padding/text -->
-        <input class="text-sm pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-full focus:bg-white focus:ring-1 focus:ring-brand-500 focus:border-brand-500 w-full md:w-80 lg:w-96 transition" placeholder="Cari varian kopi..." type="text" id="searchStock"/>
+        <input class="text-sm pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-full focus:bg-white focus:ring-1 focus:ring-brand-500 focus:border-brand-500 w-full md:w-80 lg:w-96 transition" placeholder="Cari varian kopi..." type="text" id=""/>
       </div>
 
       <!-- Right actions -->

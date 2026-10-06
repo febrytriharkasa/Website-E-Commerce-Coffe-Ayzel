@@ -88,7 +88,7 @@ $jumlahVarian = ($oldUkuran && is_array($oldUkuran)) ? count($oldUkuran) : 1;
                       <input type="hidden" name="ukuran[]" class="ukuran_final" value="<?= isset($oldUkuran[$i]) ? $oldUkuran[$i] : ''; ?>">
                       <div class="input-group">
                           <input type="number" class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all form-control ukuran_angka" value="<?= $angka; ?>" placeholder="Contoh: 250" required>
-                          <select class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-allukuran_satuan" style="max-width: 100px; cursor: pointer;">
+                          <select class="w-full px-4 py-3 text-sm bg-white border rounded-xl focus:outline-none focus:ring-1 transition-all ukuran_satuan" style="max-width: 100px; cursor: pointer;">
                               <option value="ml" <?= $satuan == 'ml' ? 'selected' : ''; ?>>ml</option>
                               <option value="L" <?= $satuan == 'L' ? 'selected' : ''; ?>>L</option>
                           </select>

@@ -124,3 +124,14 @@ _modules/*
 
 /results/
 /phpunit.xml
+
+#-------------------------
+# Node / NPM
+#-------------------------
+node_modules/
+
+#-------------------------
+# Build Outputs
+#-------------------------
+/build/
+builds

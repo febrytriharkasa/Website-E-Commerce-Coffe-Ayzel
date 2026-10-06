@@ -21,7 +21,7 @@ class Product extends BaseController
         $limit = $this->request->getVar('limit') ?? 5;
 
         $product = $this->productModel->paginate($limit, 'produk');
-    
+
         $data = [
             'title'     => 'Halaman Data Produk',
             'product'   => $product,

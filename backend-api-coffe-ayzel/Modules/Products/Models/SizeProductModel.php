@@ -36,13 +36,13 @@ class SizeProductModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert   = [];
-    protected $afterInsert    = [];
+    protected $afterInsert    = ['hapusCacheApi'];
     protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
+    protected $afterUpdate    = ['hapusCacheApi'];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+    protected $afterDelete    = ['hapusCacheApi'];
 
 
     public function getSizesWithNameProduct()
@@ -80,5 +80,14 @@ class SizeProductModel extends Model
             return max(0, $hargaDiskon); // Cegah agar tidak mines
         }
         return $harga_jual;
+    }
+
+    protected function hapusCacheApi(array $data)
+    {
+        // Hapus cache API frontend
+        cache()->delete('api_daftar_produk_fe');
+        
+        // Return data agar proses model CI4 bisa berlanjut normal
+        return $data;
     }
 }

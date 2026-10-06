@@ -21,27 +21,38 @@ class SizeProduct extends BaseController
     {
         helper('number');
 
+        // 1. Ambil limit dinamis (default 5 jika tidak ada request)
         $limit = $this->request->getVar('limit') ?? 5;
 
+        // 2. Ambil data produk dan jalankan pagination
         $product = $this->productModel->select('id, nama, jenis')->paginate($limit, 'size_product');
+        
+        // 3. Ambil semua ID produk dari hasil pagination
+        $productIds = array_column($product, 'id');
 
-        foreach ($product as &$p) {
-            $sizes = $this->sizeModel->where('produk_id', $p['id'])->orderBy('stok', 'ASC')->findAll();
+        // 4. Mencegah N+1 Query: Ambil SEMUA varian sekaligus yang sesuai dengan kumpulan ID Produk
+        // (Hanya memakan 1 query database tambahan, alih-alih melakukan query berulang kali di dalam foreach)
+        $allSizes = [];
+        if (!empty($productIds)) {
+            $sizesData = $this->sizeModel->whereIn('produk_id', $productIds)->orderBy('stok', 'ASC')->findAll();
             
-            // Looping setiap varian yang ada di dalam produk tersebut
-            foreach ($sizes as &$v) {
-                // DI SINI FUNGSI DIJALANKAN!
-                // Hasil perhitungan diskon disimpan ke dalam index baru bernama 'harga_akhir'
-                $v['harga_akhir'] = $this->sizeModel->getDiskon($v);
+            // Kelompokkan varian berdasarkan produk_id agar mudah dimasukkan ke array produk
+            foreach ($sizesData as $size) {
+                $size['harga_akhir'] = $this->sizeModel->getDiskon($size); // Hitung diskon
+                $allSizes[$size['produk_id']][] = $size;
             }
-            
-            $p['varian'] = $sizes;
         }
 
+        // 5. Gabungkan data varian ke dalam masing-masing produk
+        foreach ($product as &$p) {
+            $p['varian'] = $allSizes[$p['id']] ?? [];
+        }
+
+        // 6. Siapkan data untuk view
         $data = [
             'title'   => 'Kelola Varian Ukuran & Stok',
             'product' => $product,
-            'pager'   => $this->productModel->pager
+            'pager'   => $this->productModel->pager // Pager dikirim langsung, tanpa di-cache
         ];
 
         return view('Modules\Products\Views\Sizes-Products\index', $data);
@@ -242,6 +253,7 @@ class SizeProduct extends BaseController
             $this->sizeModel->delete($id);
             return redirect()->back()->with('success', 'Ukuran berhasil dihapus!');
         }
+
         return redirect()->back()->with('error', 'Data tidak ditemukan!');
     }
 }
